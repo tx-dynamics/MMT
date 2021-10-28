@@ -1,0 +1,99 @@
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  Image,FlatList,TouchableOpacity,Modal
+} from 'react-native';
+import theme from '../../../../theme';
+import {db,line} from '../../../../assets';
+import { Fonts } from '../../../../utils/Fonts';
+import {Header} from 'react-native-elements';
+import styles from './styles';
+import HeaderCenterComponent from '../../../../components/HeaderCenterComponent';
+const Home = props => {
+  const[trakee,settrakee]=useState([{id: 1, name: 'Wife'},
+  {id: 2, name: 'Girlfriend'},
+  {id: 3, name: 'Daughter'},
+  {id: 4, name: 'Family'},{id: 5, name: 'Friend'},
+  {id: 6, name: 'Other'}]);
+  const[trakeeList,settrakeeList]=useState([{id: 1, name: 'Lopez Robertson'},
+  {id: 2, name: 'Katty Swan'},
+  {id: 3, name: 'Angela Diaz'},
+  {id: 4, name: 'Alice Perry'}]);
+  const navigation=props.navigation;
+  const [modalVisible, setmodalVisible] = useState(false);
+  const ontrakeeShow=(({item, index})=>(
+<View style={styles.flatliststyle}>
+  <View style={{flexDirection:'row',alignItems:'center',width:'90%',justifyContent:'space-between'}}>
+ <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,marginLeft:15,color:'#383838'}}>{item.name}</Text>
+ <Image source={line} style={{width:207,height:5,borderRadius:10,marginLeft:15,alignItems:'flex-end',color:'#383838'}}/>
+ </View>
+</View>
+  ))
+  const trakeelist=(({item, index})=>(
+    <TouchableOpacity
+    onPress={()=>(setmodalVisible(false),navigation.navigate('Trakee',{screen:'TrakeeProfile'}))}
+    style={styles.Trakeeliststyle}>
+      <View style={{flexDirection:'row',alignItems:'center',width:'90%',paddingHorizontal:5,}}>
+      <Image source={db} style={{height:33,width:33}}/>
+     <Text numberOfLines={1} style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,marginLeft:15,
+     color:'#383838'}}>{item.name}
+     </Text>
+     </View>
+    </TouchableOpacity>
+      ))
+  return (
+  <View style={{flex: 1, backgroundColor: 'white'}}>
+    <Header
+        backgroundColor={theme.colors.p1}
+        containerStyle={{borderBottomLeftRadius:15,borderBottomRightRadius:15,borderBottomWidth:0}}
+        centerComponent={<HeaderCenterComponent name='MMT'/>}
+        rightComponent={
+          <TouchableOpacity onPress={()=>setmodalVisible(true)} style={{flexDirection:'row',top:10,alignItems:'center',}}>
+            <Image source={db} style={{width:22,height:22,borderRadius:11}} />
+            <Text style={{fontSize:10,fontWeight:'400',fontFamily:Fonts.Roboto,color:'white',marginLeft:2}}>+5</Text>
+          </TouchableOpacity>
+        }
+        />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setmodalVisible(!modalVisible);
+        }}>
+          <View style={{height: '100%',backgroundColor: 'rgba(64, 77, 97, 0.5)',}}>
+            <Text   style={{marginTop:20}}></Text>
+          <View style={{flex:0.3,backgroundColor:'white',width:'50%',alignSelf:'center',top:20,borderRadius:5}}>
+          <FlatList
+          style={{marginTop:10,width:'90%',alignSelf:'center',}}
+          showsVerticalScrollIndicator={false}
+          data={trakeeList}
+          renderItem={trakeelist}
+          />
+          </View>
+          </View>
+        </Modal>
+        <View style={{marginTop:15}}>
+       
+        </View>
+        <View style={{flex:0.9}}>
+        <FlatList
+          style={{marginTop:20,width:'90%',alignSelf:'center',}}
+          showsVerticalScrollIndicator={false}
+          data={trakee}
+          renderItem={ontrakeeShow}
+          />
+          </View>
+          <TouchableOpacity
+          onPress={()=>navigation.navigate('Trakee',{screen:'TrakeeName'})}
+          style={{width:'90%',alignSelf:'center',borderRadius:10,position:'absolute',bottom:10,
+          backgroundColor:theme.colors.p1,paddingVertical:15}}>
+            <Text style={{fontSize:17,fontFamily:Fonts.Poppins,
+              fontWeight:'500',textAlign:'center',color:'white'}}>Add Trackee</Text>
+          </TouchableOpacity>
+    </View>
+  );
+};
+
+export default Home;
