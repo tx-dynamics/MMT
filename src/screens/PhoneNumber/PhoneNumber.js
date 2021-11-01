@@ -10,8 +10,6 @@ import {
 import theme from '../../theme';
 import {heart} from '../../assets';
 import styles from './styles';
-import {Divider} from 'react-native-elements'
-// import CountryCodeList from 'react-native-country-code-list'
 import { Fonts } from '../../utils/Fonts';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 const PhoneNumber = props => {

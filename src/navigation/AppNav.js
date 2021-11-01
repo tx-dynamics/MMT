@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import React, {useEffect,} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -7,7 +6,7 @@ import Trakee from './TrakeeStack';
 import BottomTabNavigator from './BottomTab';
 const Stack = createStackNavigator();
 function AppNav({}) {
-  let initial = 'Root';
+  let initial = 'Auth';
 
   useEffect(() => {}, []);
 
@@ -30,8 +29,6 @@ function AppNav({}) {
         />
 
         <Stack.Screen name="Root" options={{headerShown: false}} component={BottomTabNavigator}/>
-          {/* {props => <BottomTabNavigator {...props} />} */}
-        {/* </Stack.Screen> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

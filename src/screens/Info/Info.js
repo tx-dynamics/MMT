@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
-  Image,ImageBackground, Dimensions,TouchableOpacity
+  Image,ScrollView, Dimensions,TouchableOpacity
 } from 'react-native';
 import {info,rect} from '../../assets';
 import {Fonts} from '../../utils/Fonts';

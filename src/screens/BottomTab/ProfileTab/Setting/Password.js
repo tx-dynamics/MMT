@@ -71,7 +71,7 @@ const Password = props => {
           </View>
         </View>
 
-        <TouchableOpacity
+  <TouchableOpacity
          onPress={()=>navigation.goBack()}
         style={{marginTop:25,borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
         width:'30%',alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,}}>

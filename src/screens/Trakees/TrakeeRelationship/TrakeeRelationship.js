@@ -40,21 +40,21 @@ const[Relationship,setRelationship]=useState([{id: 1, name: 'Wife'},
           }}/>
             <Text style={[styles.title]}>Enter Trackee Relationship</Text>
             <Text style={[styles.smalltitle]}>Enter your trackee relationship </Text>
-            <View style={{flex:0.06}}></View>
+            <View style={{flex:0.06,width:'90%',alignSelf:'center'}}></View>
+           <View style={{width:'90%',alignSelf:'center',borderWidth:1,borderColor:'#ED6877'}}>
             <Picker
             selectedValue={items_count}
             placeholder="Selecte No of Stores"
             style={{
               fontSize: 12,
               fontWeight: '600',
-             
               paddingVertical: 10,
               borderWidth: 10,
-              width: '90%',
+              width: '100%',
               borderRadius: 10,
-              backgroundColor:'white',
+              backgroundColor:theme.colors.p1,
               //color:'white'
-              color: theme.colors.primary,alignSelf:'center',
+              color: 'white',alignSelf:'center',
             }}
             mode='dropdown'
             itemStyle={{
@@ -75,7 +75,7 @@ const[Relationship,setRelationship]=useState([{id: 1, name: 'Wife'},
                         label={item.name}
                         value={item.id}
                         style={{fontFamily:Fonts.Poppins,fontSize:15,fontWeight:'300'}}
-                        backgroundColor={'#FFB5CC'}
+                        backgroundColor={'white'}
                       />
                     );
                   default:
@@ -84,12 +84,13 @@ const[Relationship,setRelationship]=useState([{id: 1, name: 'Wife'},
                         key={index}
                         label={item.name}
                         value={item.id}
-                        backgroundColor={'#FFB5CC'}
+                        backgroundColor={'white'}
                       />
                     );
                 }
               })}
           </Picker>
+          </View>
 <View style={{flex:0.1}}></View>
         <TouchableOpacity onPress={()=>props.navigation.navigate('TrakeeDate')}
         style={{borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,

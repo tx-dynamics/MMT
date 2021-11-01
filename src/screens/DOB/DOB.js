@@ -16,7 +16,6 @@ const DOB = props => {
 const [date, setDate] = useState(new Date())
 const[loading,setloading]=useState(false)
   return (
-
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       enabled={Platform.OS === "ios" ? true : false}
