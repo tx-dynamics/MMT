@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "644863409311",
+    "project_id": "the-mtt",
+    "storage_bucket": "the-mtt.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:644863409311:android:83df4000ddb957e064f6aa",
+        "android_client_info": {
+          "package_name": "com.mmt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "644863409311-ernkqn0s09sf518krgjmko79cg6lprji.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoB3bKLFzXnWUFQOeZX_KG12iI3pMEE8c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "644863409311-ernkqn0s09sf518krgjmko79cg6lprji.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

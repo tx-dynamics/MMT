@@ -12,9 +12,39 @@ import {heart} from '../../assets';
 import styles from '../PhoneNumber/styles';
 import DatePicker from 'react-native-date-picker'
 import { Fonts } from '../../utils/Fonts';
+import Snackbar from 'react-native-snackbar';
+//firebase
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
+import moment from 'moment';
 const DOB = props => {
-const [date, setDate] = useState(new Date())
-const[loading,setloading]=useState(false)
+const [date, setDate] = useState(new Date());
+const[loading,setloading]=useState(false);
+async function onDob(){
+ console.log(date.toJSON());
+
+ const data={dob:date.toJSON()};
+ const up= database().ref('users/' + auth().currentUser?.uid+'/');
+await up.update(data).then
+ (()=>
+  {
+    setloading(false);
+    props.navigation.navigate('Setup');
+    Snackbar.show({
+    text: 'Date of Birth Added',
+    backgroundColor: 'black',
+  });
+}
+  ).catch(err =>{
+    setloading(false);
+    Snackbar.show({
+      text: err.message,
+      backgroundColor: 'black',
+    });
+  });
+
+  
+}
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -38,7 +68,7 @@ const[loading,setloading]=useState(false)
             
             <TextInput
             style={{width:'70%'}}
-              value={date}
+              value={moment(date).format('DD MMM, YYYY')}
               placeholderTextColor={theme.colors.s2}
               underlineColorAndroid="transparent"
               editable={false}
@@ -55,12 +85,24 @@ const[loading,setloading]=useState(false)
         androidVariant='nativeAndroid'
         date={date} 
         style={{alignSelf:'center',}}
-        onDateChange={txt=>console.log(txt)} />
-<View style={{flex:0.15}}></View>
-        <TouchableOpacity onPress={()=>props.navigation.navigate('Setup')}
+        onDateChange={txt=>{setDate(txt),console.log(txt)}}/>
+        <View style={{flex:0.15}}></View>
+        <TouchableOpacity 
+        // onPress={()=>props.navigation.navigate('Setup')}
+        onPress={()=>{onDob(),setloading(true)}}
         style={{borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
         width:'30%',alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,}}>
-  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Next</Text>
+           {loading ? (
+                <ActivityIndicator
+                  animating
+                  color={'white'}
+                  style={{
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                />
+              ) : (
+  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Next</Text>)}
 </TouchableOpacity>
 
     </KeyboardAvoidingView>

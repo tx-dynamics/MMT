@@ -21,7 +21,7 @@ const[Relationship,setRelationship]=useState([{id: 1, name: 'Wife'},
 {id: 2, name: 'Girlfriend'},
 {id: 3, name: 'Daughter'},
 {id: 4, name: 'Family'},{id: 5, name: 'Friend'},
-{id: 6, name: 'Other'},])
+{id: 6, name: 'Other'},]);
   return (
 
     <KeyboardAvoidingView

@@ -11,11 +11,32 @@ import theme from '../../theme';
 import {heart} from '../../assets';
 import styles from './styles';
 import { Fonts } from '../../utils/Fonts';
-import AntDesign from 'react-native-vector-icons/AntDesign'
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Snackbar from 'react-native-snackbar';
+//firebase
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 const PhoneNumber = props => {
 const[phone,setphone]=useState('');
 const[countryCode,setcountryCode]=useState('PK +92');
-const[loading,setloading]=useState(false)
+const[loading,setloading]=useState(false);
+async function onphone(){
+  if(phone!==''){
+  database().ref('users/'+auth().currentUser?.uid).update({
+    phone
+  }).then
+ (()=>
+  {
+    setloading(false);
+    props.navigation.navigate('DOB');
+    Snackbar.show({
+    text: 'Phone Number Added',
+    backgroundColor: 'black',
+  });
+}
+  )
+  }
+}
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -53,10 +74,23 @@ const[loading,setloading]=useState(false)
         </View>
       
 <View style={{flex:0.1}}></View>
-        <TouchableOpacity onPress={()=>props.navigation.navigate('DOB')}
+        <TouchableOpacity 
+        disabled={phone===''?true:false}
+        // onPress={()=>props.navigation.navigate('DOB')}
+        onPress={()=>{onphone(),setloading(true)}}
         style={{borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
         width:'30%',alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,}}>
-  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Next</Text>
+            {loading ? (
+                <ActivityIndicator
+                  animating
+                  color={'white'}
+                  style={{
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                />
+              ) : (
+  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Next</Text>)}
 </TouchableOpacity>
 
     </KeyboardAvoidingView>

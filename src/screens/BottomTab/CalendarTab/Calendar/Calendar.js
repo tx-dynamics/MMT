@@ -36,7 +36,8 @@ const renderArrow = (direction) => {
         leftComponent={<HeaderLeftComponent navigation={props.navigation} />}
         />
          <View style={{flex:0.04}}></View>
-         <View  style={{borderWidth:1,width:'90%',alignSelf:'center',borderColor:'#C62252',backgroundColor:'tomato'}}>
+         <View  style={{borderWidth:1,width:'90%',alignSelf:'center',
+         borderColor:'#C62252', borderRadius: 10,padding:6}}>
          <Picker
          selectedValue={items_count}
             placeholder="Selecte No of Stores"
@@ -99,7 +100,7 @@ const renderArrow = (direction) => {
                 textMonthFontFamily: Fonts.Poppins,
                 textMonthFontWeight: '400',
               }}
-            // style={[ {height: 300}]}
+            style={[ {height:330}]}
             dayComponent={({date, state}) => {
               return (
               <View >

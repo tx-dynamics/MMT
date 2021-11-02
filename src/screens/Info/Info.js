@@ -19,7 +19,8 @@ const Info = props => {
 <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:24}}>Menstruation or period</Text>
 <Text style={{color:'#FFC2D5',fontWeight:'300',fontFamily:Fonts.Poppins,fontSize:17,textAlign:'left'}}>It is normal vaginal bleeding that occurs as part of a woman's monthly cycle. Every month, your body prepares for pregnancy. If no pregnancy occurs, the uterus, or womb, sheds its lining. The menstrual blood is partly blood and partly tissue from inside the uterus.</Text>
 </View>
-<TouchableOpacity onPress={()=>props.navigation.navigate('Signin')} style={{marginTop:20,borderColor:'#FFB5CC',
+<TouchableOpacity onPress={()=>props.navigation.navigate('Signin')}
+style={{marginTop:20,borderColor:'#FFB5CC',
 borderWidth:1,backgroundColor:theme.colors.primary,width:'30%',
 alignSelf:'center',alignItems:'center',padding:13,borderRadius:10}}>
   <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Start</Text>

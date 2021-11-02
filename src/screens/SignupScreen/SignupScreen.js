@@ -5,12 +5,16 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  ActivityIndicator,ScrollView,Platform, Dimensions
+  ActivityIndicator,ScrollView, Dimensions
 } from 'react-native';
 import theme from '../../theme';
 import {heart} from '../../assets';
 import styles from './styles';
 import { Fonts } from '../../utils/Fonts';
+import Snackbar from 'react-native-snackbar';
+//firebase
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 const SignupScreen = props => {
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState('');
@@ -24,12 +28,74 @@ const SignupScreen = props => {
   const [fNameMessage, setfNameMessage] = useState('');
   const [lNameMessage, setlNameMessage] = useState('');
   const navigation = props.navigation;
+  
+  async function clickRegister() {
+    var regData = {
+      fName,lName,email,userName,
+      createdAt: new Date().toISOString(),
+    };
+    console.log('registration data===>', regData);
+    //  Registration part
+    if (fName !==''&& lName!==''&&email!==''&&userName!=='') {
+      console.log('I am here');
+      auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(newUser => {
+          if (newUser) {
+            auth()
+              .currentUser.updateProfile({
+                displayName: regData.fName + ' ' + regData.lName,
+              })
+              .then(() => {
+                database()
+                  .ref('users/')
+                  .child(auth().currentUser.uid)
+                  .set(regData)
+                  .then(() => {
+                    auth()
+                      .signInWithEmailAndPassword(email, password)
+                      .then(res => {
+                        console.log(auth().currentUser);
+                        setLoading(false);
+                        props.navigation.navigate('Trakee',{screen:'Phone'});
+                        Snackbar.show({
+                          text: `SignUp Succesfully`,
+                          backgroundColor:'black',
+                          duration: Snackbar.LENGTH_LONG,
+                        });
+                      })
+                      .catch(res => {
+                        setLoading(false);
+                        console.log(res);
+                        Snackbar.show({
+                          text: res.message,
+                          backgroundColor: 'black',
+                        });
+                      });
+                  });
+              });
+          }
+        })
+        .catch(error => {
+          var errorMessage = error.message;
+         setLoading(false);
+         console.log(errorMessage.replace('[auth/email-already-in-use]',''));
+         Snackbar.show({
+          text: errorMessage.replace('[auth/email-already-in-use]',''),
+          backgroundColor: 'black',
+        });
+        });
+    } else {
+      setLoading(false);
+      Snackbar.show({
+        text: 'Kindly Fill all the fields',
+        backgroundColor: 'black',
+      });
+    }
+    setLoading(false);
+  }
   return (
-
-    <ScrollView
-      
-      style={{flex: 1, backgroundColor: theme.colors.p1}}
-    >
+  <ScrollView style={{flex: 1, backgroundColor: theme.colors.p1}}>
      <Image
           source={heart}
           style={{
@@ -96,15 +162,27 @@ const SignupScreen = props => {
         </View>
 
         <TouchableOpacity
-         onPress={()=>props.navigation.navigate('Trakee',{screen:'Phone'})}
+        disabled={fName ===''||lName===''||userName===''||email===''||password===''? true:false}
+         onPress={()=>{clickRegister(),setLoading(true)}}
         style={{marginTop:25,borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
         width:'30%',alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,}}>
-  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Next</Text>
+           {loading ? (
+                <ActivityIndicator
+                  animating
+                  color={'white'}
+                  style={{
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                />
+              ) : (
+  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Next</Text>)}
 </TouchableOpacity>
 <TouchableOpacity
  onPress={()=>props.navigation.navigate('Signin')}
 style={{alignSelf:'center',marginTop:Dimensions.get('window').height/6}}>
-<Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:15}}>Already have an account?</Text>
+<Text style={{color:'white',fontWeight:'500',
+fontFamily:Fonts.Poppins,fontSize:15}}>Already have an account?</Text>
     </TouchableOpacity>
     </ScrollView>
   );

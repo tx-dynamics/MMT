@@ -11,10 +11,41 @@ import theme from '../../theme';
 import {heart} from '../../assets';
 import styles from './styles';
 import { Fonts } from '../../utils/Fonts';
+import Snackbar from 'react-native-snackbar';
+//firebase
+import auth from '@react-native-firebase/auth';
 const Signin = props => {
 const[email,setemail]=useState('');
 const[password,setpassword]=useState('');
 const[loading,setloading]=useState(false)
+async function login() {
+  if (email !== '' && password !== '') {
+    auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(() => {
+        setloading(false);
+        props.navigation.navigate('Root',{screen:'Home'});
+        Snackbar.show({
+          text: `Sign in Succesfully`,
+          backgroundColor: theme.colors.primary,
+          duration: Snackbar.LENGTH_LONG,
+        });
+      })
+      .catch(err =>{
+        setloading(false);
+        Snackbar.show({
+          text: err.message,
+          backgroundColor: 'black',
+        });
+      });
+  } else {
+    setloading(false);
+    Snackbar.show({
+      text: 'Kindly Fill all the fields',
+      backgroundColor: 'black',
+    });
+  }
+};
   return (
 
     <KeyboardAvoidingView
@@ -61,10 +92,23 @@ fontWeight:'300',
 fontFamily:Fonts.Poppins,fontSize:15,marginTop:3,color:'white'}}>Forgot Password?</Text>
         </View>
 
-        <TouchableOpacity onPress={()=>props.navigation.navigate('Signin')}
+        <TouchableOpacity
+        disabled={email===''||password===''?true:false}
+        onPress={()=>{login(),setloading(true)}}
         style={{marginTop:25,borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
         width:'30%',alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,}}>
-  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Log In</Text>
+           {loading ? (
+                <ActivityIndicator
+                  animating
+                  color={'white'}
+                  style={{
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                />
+              ) : (
+              <Text style={{color:'white',fontWeight:'500',
+              fontFamily:Fonts.Poppins,fontSize:17}}>Log In</Text>)}
 </TouchableOpacity>
 <TouchableOpacity
 onPress={()=>props.navigation.navigate('Signup')}

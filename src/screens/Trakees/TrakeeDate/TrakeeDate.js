@@ -26,7 +26,7 @@ const[loading,setloading]=useState(false)
      <Image
           source={heart}
           style={{
-            height: 240,
+            height: Dimensions.get('window').height/3.5,
             width: 171,
             alignSelf: 'center',
             marginTop: 10,
@@ -35,7 +35,9 @@ const[loading,setloading]=useState(false)
             <Text style={[styles.smalltitle]}>Enter your trackee last start date</Text>
         <View >
         
-          <TouchableOpacity style={[styles.InputContainer,{marginTop:30,flexDirection:'row',alignItems:"center"}]}>
+          <TouchableOpacity
+          style={[styles.InputContainer,
+          {marginTop:30,flexDirection:'row',alignItems:"center"}]}>
             
             <TextInput
             style={{width:'70%'}}
@@ -48,7 +50,7 @@ const[loading,setloading]=useState(false)
            
           </TouchableOpacity>
         </View>
-        <View style={{flex:0.1}}></View>
+        <View style={{flex:0.05}}></View>
         <DatePicker 
         mode='date'
         textColor='white'
@@ -57,9 +59,9 @@ const[loading,setloading]=useState(false)
         date={date} 
         style={{alignSelf:'center',}}
         onDateChange={txt=>console.log(txt)} />
-<View style={{flex:0.15}}></View>
+<View style={{flex:0.1}}></View>
         <TouchableOpacity onPress={()=>props.navigation.navigate('TrakeeCycle')}
-        style={{borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
+        style={{borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,marginTop:10,
         width:'30%',alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,}}>
   <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Done</Text>
 </TouchableOpacity>

@@ -100,7 +100,7 @@ style={{width:'90%',alignSelf:'center',marginTop:15,}}>
           <FlatList
           horizontal={true}
           style={{marginTop:10,width:'100%',alignSelf:'center'}}
-          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
           data={trakee}
           renderItem={trakeelist}
           />
@@ -157,7 +157,7 @@ style={{width:'90%',alignSelf:'center',marginTop:15,}}>
               height: 2,
             },
             shadowOpacity: 0.25,
-            shadowRadius: 3.84,marginLeft:5}}>
+            shadowRadius: 3.84,marginLeft:5,}}>
             <Text style={{
             fontFamily:Fonts.Poppins,
             fontsize:13,fontWeight:'400',color:'black'}}>Cycle Length</Text>

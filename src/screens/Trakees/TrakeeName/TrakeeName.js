@@ -12,10 +12,33 @@ import {heart} from '../../../assets';
 import styles from '../../PhoneNumber/styles';
 // import CountryCodeList from 'react-native-country-code-list'
 import { Fonts } from '../../../utils/Fonts';
+import Snackbar from 'react-native-snackbar';
+//firebase
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 const TrakeeName = props => {
 const[Name,setName]=useState('');
 const[countryCode,setcountryCode]=useState('PK +92');
-const[loading,setloading]=useState(false)
+const[loading,setloading]=useState(false);
+async function onName(){
+  var newPostKey = database()
+  .ref('trakees/')
+  .child(auth().currentUser?.uid)
+  .push().key;
+console.log('post key===\n', newPostKey);
+  const data={Name};
+  const up= database()
+  .ref('trakees/' + auth().currentUser?.uid+'/'+newPostKey);
+  up.set(data);
+  setloading(false);
+  setName('');
+  props.navigation.navigate('TrakeePic',{key:newPostKey});
+  Snackbar.show({
+     text: 'Trakee Name Added',
+     backgroundColor: 'black',
+   });
+  
+  }
   return (
 
     <KeyboardAvoidingView
@@ -52,10 +75,22 @@ const[loading,setloading]=useState(false)
         </View>
       
 <View style={{flex:0.1}}></View>
-        <TouchableOpacity onPress={()=>props.navigation.navigate('TrakeePic')}
+        <TouchableOpacity 
+        disabled={Name!==''?false:true}
+        // onPress={()=>props.navigation.navigate('TrakeePic')}
+        onPress={()=>{onName(),setloading(true)}}
         style={{borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
         width:'25%',alignSelf:'center',alignItems:'center',padding:10,borderRadius:10,}}>
-  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Done</Text>
+             {loading ? 
+                <ActivityIndicator
+                  animating
+                  color={'white'}
+                  style={{
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                />:
+  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Done</Text>}
 </TouchableOpacity>
 
     </KeyboardAvoidingView>

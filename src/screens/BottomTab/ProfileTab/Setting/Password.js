@@ -74,7 +74,7 @@ const Password = props => {
   <TouchableOpacity
          onPress={()=>navigation.goBack()}
         style={{marginTop:25,borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
-        width:'30%',alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,}}>
+        width:'30%',alignSelf:'center',alignItems:'center',padding:15,borderRadius:10,}}>
   <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Save</Text>
 </TouchableOpacity>
     </KeyboardAvoidingView>

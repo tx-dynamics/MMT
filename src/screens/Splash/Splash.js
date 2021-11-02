@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import {View, StatusBar, ImageBackground, AsyncStorage} from 'react-native';
 import {icon} from '../../assets';
 import styles from './styles';
-import {connect} from 'react-redux';
+//firebase
+import auth from '@react-native-firebase/auth';
 
 class Splash extends Component {
   constructor(props) {
@@ -14,9 +15,8 @@ class Splash extends Component {
   };
   splashDone = () => {
     setTimeout(() => {
-      this.props.navigation.navigate(
-       'info'
-      );
+      auth()?.currentUser?  this.props.navigation.navigate('Root',{screen:'Home' }
+      ): this.props.navigation.navigate('info');
     }, 1000);
   };
 

@@ -62,7 +62,7 @@ const EditProfile = props => {
         }}>
           <View style={{height: '100%',backgroundColor: 'rgba(64, 77, 97, 0.5)',}}>
           <View style={{backgroundColor:'#ED6591',width:'100%',position:'absolute',
-          height:Dimensions.get('window').height/2,borderTopLeftRadius:30,borderTopRightRadius:30,
+          height:Dimensions.get('window').height/1.8,borderTopLeftRadius:30,borderTopRightRadius:30,
           alignSelf:'center',bottom:0,borderRadius:5}}>
         <View style={[styles.InputContainer,
           {marginTop:30,flexDirection:'row',alignItems:"center"}]}>
@@ -81,7 +81,7 @@ const EditProfile = props => {
         fadeToColor='white'
         androidVariant='nativeAndroid'
         date={date} 
-        style={{alignSelf:'center',marginTop:10}}
+        style={{alignSelf:'center',}}
         onDateChange={txt=>console.log(txt)} />
 <TouchableOpacity onPress={()=>setmodalVisible(false)}
         style={{borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
