@@ -14,12 +14,46 @@ import HeaderLeftComponent from '../../../../components/HeaderLeftComponent';
 import styles from '../../../SignupScreen/styles';
 import { Fonts } from '../../../../utils/Fonts';
 import {botom} from '../../../../assets';
+import {useIsFocused} from '@react-navigation/native';
+//firebase
+import Snackbar from 'react-native-snackbar';
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 const UserName = props => {
   const [loading, setLoading] = useState(false);
   const [userName, setuserName] = useState('');
   const [fName, setfName] = useState('');
   const [lName, setlName] = useState('');
+  const isFocused = useIsFocused();
   const navigation = props.navigation;
+  useEffect(()=>{
+    loadData();
+  },[isFocused])
+  async function loadData(){
+    const data=database().ref('users/'+auth().currentUser?.uid+'/');
+    data.on('value',child=>{
+      const dat=child?.val();
+      // seturi(child?.val()?.dp)
+      console.log(dat?.fName);
+      setfName(dat?.fName);
+      setlName(dat?.lName);
+      setuserName(dat?.userName);
+    })
+  }
+  async function onupdate(){
+    const data=database().ref('users/'+auth().currentUser?.uid);
+    data.update({
+      fName,lName,userName
+    });
+    setTimeout(()=>{
+      setLoading(false);
+      Snackbar.show({
+         text: 'Data Updated',
+         backgroundColor: 'black',
+       });
+    },1000)
+
+  }
   return (
     <View  style={{flex: 1, backgroundColor: theme.colors.p1}}>
     <Header
@@ -68,10 +102,20 @@ const UserName = props => {
         </View>
 
         <TouchableOpacity
-         onPress={()=>navigation.goBack()}
+         onPress={()=>{onupdate(),setLoading(true)}}
         style={{marginTop:25,borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
         width:'30%',alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,}}>
-  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Save</Text>
+            {loading?
+                <ActivityIndicator
+                  animating
+                  color={'white'}
+                  size={25}
+                  style={{
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                />:
+  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Save</Text>}
 </TouchableOpacity>
     </KeyboardAvoidingView>
     <Image source={botom} resizeMode='contain' style={{height:136,width:136,position:'absolute',bottom:-5,alignSelf:'flex-end'}} />

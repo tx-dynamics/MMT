@@ -22,11 +22,6 @@ const SignupScreen = props => {
   const [email, setemail] = useState('');
   const [fName, setfName] = useState('');
   const [lName, setlName] = useState('');
-  const [emailMessage, setemailMessage] = useState('');
-  const [passwordMessage, setpasswordMessage] = useState('');
-  const [confirmMessage, setconfirmMessage] = useState('');
-  const [fNameMessage, setfNameMessage] = useState('');
-  const [lNameMessage, setlNameMessage] = useState('');
   const navigation = props.navigation;
   
   async function clickRegister() {

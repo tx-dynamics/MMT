@@ -12,10 +12,42 @@ import {heart} from '../../../assets';
 import styles from '../../PhoneNumber/styles';
 // import CountryCodeList from 'react-native-country-code-list'
 import { Fonts } from '../../../utils/Fonts';
+import Snackbar from 'react-native-snackbar';
+//firebase
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 const TrakeePeriodCycle = props => {
 const[Name,setName]=useState('');
-const[countryCode,setcountryCode]=useState('PK +92');
-const[loading,setloading]=useState(false)
+const[loading,setloading]=useState(false);
+async function oncycle(){
+  const key=props.route.params.key;
+  if(Name!=='')
+  { 
+  const dataupload= database().ref('trakees/'+ auth().currentUser?.uid+'/'+key+'/');
+  dataupload.update({
+    cycle:Name
+  });
+  
+  setTimeout(()=>{
+    setloading(false);
+    setName('');
+    props.navigation.navigate('Root',{screen:'Home'});
+    Snackbar.show({
+       text: 'Trakee Period Cycle Added',
+       backgroundColor: 'black',
+     });
+  },1000)
+} else{
+  setTimeout(()=>{
+    setloading(false);
+    Snackbar.show({
+      text: 'Kindly Enter Trakee Period Cycle',
+      backgroundColor: 'black',
+    });
+  },300)
+   
+  }
+}
   return (
 
     <KeyboardAvoidingView
@@ -52,10 +84,19 @@ const[loading,setloading]=useState(false)
         </View>
       
 <View style={{flex:0.1}}></View>
-        <TouchableOpacity onPress={()=>props.navigation.navigate('Root',{screen:'Home'})}
+        <TouchableOpacity onPress={()=>{oncycle(),setloading(true)}}
         style={{borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
         width:'25%',alignSelf:'center',alignItems:'center',padding:10,borderRadius:10,}}>
-  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Done</Text>
+           {loading ? 
+                <ActivityIndicator
+                  animating
+                  color={'white'}
+                  style={{
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                />:
+  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Done</Text>}
 </TouchableOpacity>
 
     </KeyboardAvoidingView>

@@ -14,12 +14,78 @@ import HeaderLeftComponent from '../../../../components/HeaderLeftComponent';
 import styles from '../../../SignupScreen/styles';
 import { Fonts } from '../../../../utils/Fonts';
 import {botom} from '../../../../assets';
+import Snackbar from 'react-native-snackbar';
+//firebase
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
+import storage from '@react-native-firebase/storage';
 const Password = props => {
   const [loading, setLoading] = useState(false);
   const [currentPassword, setcurrentPassword] = useState('');
   const [password, setpassword] = useState('');
   const [newPassword, setnewPassword] = useState('');
   const navigation = props.navigation;
+ const reauthenticate = currentPassword => {
+    var user = auth().currentUser;
+    var cred = auth.EmailAuthProvider.credential(user.email, currentPassword);
+    return user.reauthenticateWithCredential(cred);
+  };
+  async function updatePasword(){
+    if(currentPassword!==''&&password!==''&&newPassword!=='')
+  {
+      if(newPassword===password){
+      reauthenticate(currentPassword)
+        .then(() => {
+          var user = auth().currentUser;
+          user
+            .updatePassword(newPassword)
+            .then(() => {
+              setTimeout(()=>{
+                setLoading(false);
+                Snackbar.show({
+                   text: 'Password updated',
+                   backgroundColor: 'black',
+                 });
+              },500)
+            })
+            .catch(error => {
+              console.log(error);
+                setLoading(false);
+                Snackbar.show({
+                   text: error.message,
+                   backgroundColor: 'black',
+                 });
+            });
+        })
+        .catch(error => {
+          console.log(error);
+          setLoading(false);
+          Snackbar.show({
+             text: error.message.replace('[auth/too-many-requests]',''),
+             backgroundColor: 'black',
+           });
+        });
+
+    }else{
+      setTimeout(()=>{
+        setLoading(false);
+        Snackbar.show({
+           text: 'Both passwords must be match',
+           backgroundColor: 'black',
+         });
+      },1000)
+    }
+  }
+    else{
+      setTimeout(()=>{
+        setLoading(false);
+        Snackbar.show({
+           text: 'Kindly fill all the fields',
+           backgroundColor: 'black',
+         });
+      },1000)
+    }
+  }
   return (
     <View  style={{flex: 1, backgroundColor: theme.colors.p1}}>
     <Header
@@ -72,10 +138,20 @@ const Password = props => {
         </View>
 
   <TouchableOpacity
-         onPress={()=>navigation.goBack()}
+         onPress={()=>{updatePasword(),setLoading(true)}}
         style={{marginTop:25,borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
         width:'30%',alignSelf:'center',alignItems:'center',padding:15,borderRadius:10,}}>
-  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Save</Text>
+            {loading?
+                <ActivityIndicator
+                  animating
+                  color={'white'}
+                  size={25}
+                  style={{
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                />:
+  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Save</Text>}
 </TouchableOpacity>
     </KeyboardAvoidingView>
     <Image source={botom} resizeMode='contain' style={{height:136,width:136,position:'absolute',bottom:-5,alignSelf:'flex-end'}} />

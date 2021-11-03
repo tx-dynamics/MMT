@@ -12,9 +12,17 @@ import theme from '../../../theme';
 import HeaderLeftComponent from '../../../components/HeaderLeftComponent';
 import DatePicker from 'react-native-date-picker'
 import styles from '../../PhoneNumber/styles';
+import {useIsFocused} from '@react-navigation/native';
+//firebase
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 const Profile = props => {
   const [modalVisible, setmodalVisible] = useState(false);
   const [date, setDate] = useState(new Date());
+  const[uri,seturi]=useState();
+  const[name,setname]=useState();
+  const isFocused = useIsFocused();
+ 
   return (
   <View style={{flex: 1, backgroundColor: '#ED618C'}}>
     <Header

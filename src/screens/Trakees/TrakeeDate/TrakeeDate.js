@@ -12,12 +12,31 @@ import {heart} from '../../../assets';
 import styles from '../../PhoneNumber/styles';
 import DatePicker from 'react-native-date-picker'
 import { Fonts } from '../../../utils/Fonts';
+import moment from 'moment';
+import Snackbar from 'react-native-snackbar';
+//firebase
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 const TrakeeDate = props => {
-const [date, setDate] = useState(new Date())
-const[loading,setloading]=useState(false)
+const [date, setDate] = useState(new Date());
+const[loading,setloading]=useState(false);
+async function startDate(){
+  const id= props.route.params.key;
+  const data= database().ref('trakees/'+auth().currentUser?.uid+'/'+id+'/');
+  data.update({
+    lastDate:date.toJSON()
+  });
+  setTimeout(()=>{
+    setloading(false);
+  props.navigation.navigate('TrakeeCycle',{key:id});
+    Snackbar.show({
+       text: 'Trakee Date Added',
+       backgroundColor: 'black',
+     });
+  },1000)
+}
   return (
-
-    <KeyboardAvoidingView
+  <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       enabled={Platform.OS === "ios" ? true : false}
       keyboardVerticalOffset={-60}
@@ -41,7 +60,7 @@ const[loading,setloading]=useState(false)
             
             <TextInput
             style={{width:'70%'}}
-              value={date}
+              value={moment(date).format('DD MMM, YYYY')}
               placeholderTextColor={theme.colors.s2}
               underlineColorAndroid="transparent"
               editable={false}
@@ -58,12 +77,21 @@ const[loading,setloading]=useState(false)
         androidVariant='nativeAndroid'
         date={date} 
         style={{alignSelf:'center',}}
-        onDateChange={txt=>console.log(txt)} />
+        onDateChange={txt=>setDate(txt)} />
 <View style={{flex:0.1}}></View>
-        <TouchableOpacity onPress={()=>props.navigation.navigate('TrakeeCycle')}
+        <TouchableOpacity onPress={()=>{startDate(),setloading(true)}}
         style={{borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,marginTop:10,
         width:'30%',alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,}}>
-  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Done</Text>
+           {loading ? 
+                <ActivityIndicator
+                  animating
+                  color={'white'}
+                  style={{
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                />:
+  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Done</Text>}
 </TouchableOpacity>
 
     </KeyboardAvoidingView>

@@ -10,6 +10,11 @@ import { Fonts } from '../../../../utils/Fonts';
 import {Header} from 'react-native-elements';
 import styles from './styles';
 import HeaderCenterComponent from '../../../../components/HeaderCenterComponent';
+import {useIsFocused} from '@react-navigation/native';
+import Entypo from 'react-native-vector-icons/Entypo';
+//firebase
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 const Home = props => {
   const[trakee,settrakee]=useState([{id: 1, name: 'Wife'},
   {id: 2, name: 'Girlfriend'},
@@ -21,7 +26,34 @@ const Home = props => {
   {id: 3, name: 'Angela Diaz'},
   {id: 4, name: 'Alice Perry'}]);
   const navigation=props.navigation;
+  const isFocused = useIsFocused();
+  const[length,setlength]=useState(2);
   const [modalVisible, setmodalVisible] = useState(false);
+  useEffect(()=>{
+    getTrakee();
+  },[isFocused])
+  async function getTrakee(){
+    const data =database().ref('trakees/'+auth().currentUser.uid+'/');
+    let arr=[];
+    data.on('value',childern=>{
+      childern.forEach(item=>{
+        const dat=item?.val();
+        arr.push({
+          id:item.key,
+          name:dat?.Name,
+          cycle:dat?.cycle,
+          dp:dat?.dp,
+          item_count:dat?.item_count,
+          lastDate:dat?.lastDate
+        })
+      })
+     
+      // settrakeeList(arr);
+      // setlength(arr.length)
+      console.log('data===>',trakeeList);
+    });
+    
+  }
   const ontrakeeShow=(({item, index})=>(
 <View style={styles.flatliststyle}>
   <View style={{flexDirection:'row',alignItems:'center',width:'90%',justifyContent:'space-between'}}>
@@ -35,7 +67,7 @@ const Home = props => {
     onPress={()=>(setmodalVisible(false),navigation.navigate('Trakee',{screen:'TrakeeProfile'}))}
     style={styles.Trakeeliststyle}>
       <View style={{flexDirection:'row',alignItems:'center',width:'90%',paddingHorizontal:5,}}>
-      <Image source={db} style={{height:33,width:33}}/>
+      <Image source={item.dp?{uri:item.dp}:db} style={{height:33,width:33,borderRadius:16}}/>
      <Text numberOfLines={1} style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,marginLeft:15,
      color:'#383838'}}>{item.name}
      </Text>
@@ -49,9 +81,15 @@ const Home = props => {
         containerStyle={{borderBottomLeftRadius:15,borderBottomRightRadius:15,borderBottomWidth:0}}
         centerComponent={<HeaderCenterComponent name='MMT'/>}
         rightComponent={
-          <TouchableOpacity onPress={()=>setmodalVisible(true)} style={{flexDirection:'row',top:10,alignItems:'center',}}>
-            <Image source={db} style={{width:22,height:22,borderRadius:11}} />
-            <Text style={{fontSize:10,fontWeight:'400',fontFamily:Fonts.Roboto,color:'white',marginLeft:2}}>+5</Text>
+          <TouchableOpacity onPress={()=>setmodalVisible(true)}
+          style={{flexDirection:'row',top:10,alignItems:'center',}}>
+           {trakeeList.length>0?
+           <>
+           <Image source={ trakeeList[0]?.dp?{uri: trakeeList[0]?.dp}:db} style={{width:22,height:22,borderRadius:11}} />
+            <Text style={{fontSize:10,fontWeight:'400',
+            fontFamily:Fonts.Roboto,color:'white',marginLeft:2}}>{`+${length}`}</Text>
+            </>:
+            null}
           </TouchableOpacity>
         }
         />

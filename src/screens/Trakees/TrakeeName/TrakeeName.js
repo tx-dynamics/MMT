@@ -29,14 +29,18 @@ console.log('post key===\n', newPostKey);
   const data={Name};
   const up= database()
   .ref('trakees/' + auth().currentUser?.uid+'/'+newPostKey);
-  up.set(data);
   setloading(false);
-  setName('');
-  props.navigation.navigate('TrakeePic',{key:newPostKey});
-  Snackbar.show({
-     text: 'Trakee Name Added',
-     backgroundColor: 'black',
-   });
+  up.set(data);
+  setTimeout(()=>{
+    setloading(false);
+    setName('');
+    props.navigation.navigate('TrakeePic',{key:newPostKey});
+    Snackbar.show({
+       text: 'Trakee Name Added',
+       backgroundColor: 'black',
+     });
+  },1000)
+ 
   
   }
   return (

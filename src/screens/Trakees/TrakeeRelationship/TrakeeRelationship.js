@@ -11,20 +11,37 @@ import theme from '../../../theme';
 import {upload,heart} from '../../../assets';
 import styles from '../../PhoneNumber/styles';
 import {Picker} from '@react-native-picker/picker';
-// import CountryCodeList from 'react-native-country-code-list'
 import { Fonts } from '../../../utils/Fonts';
+import Snackbar from 'react-native-snackbar';
+//firebase
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 const TrakeeRelationship = props => {
-const[items_count,setitems_count]=useState('');
+const[items_count,setitems_count]=useState(1);
 const[loading,setloading]=useState(false);
-const [uri,seturi]=useState('');
 const[Relationship,setRelationship]=useState([{id: 1, name: 'Wife'},
 {id: 2, name: 'Girlfriend'},
 {id: 3, name: 'Daughter'},
 {id: 4, name: 'Family'},{id: 5, name: 'Friend'},
 {id: 6, name: 'Other'},]);
-  return (
+async function onRelation(){
+  const id= props.route.params.key;
+const data=database().ref('trakees/'+auth().currentUser?.uid+'/'+id+'');
+data.update({
+  items_count
+});
+setTimeout(()=>{
+  setloading(false);
+  props.navigation.navigate('TrakeeDate',{key:id});
+  Snackbar.show({
+     text: 'Trakee Relation Added',
+     backgroundColor: 'black',
+   });
+},1000)
+}
 
-    <KeyboardAvoidingView
+  return (
+  <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       enabled={Platform.OS === "ios" ? true : false}
       keyboardVerticalOffset={-60}
@@ -63,7 +80,7 @@ const[Relationship,setRelationship]=useState([{id: 1, name: 'Wife'},
             }}
             dropdownIconColor='#FFB5CC'
             onValueChange={(itemValue, itemIndex) =>
-              setitems_count(itemValue)
+             { setitems_count(itemValue),console.log(itemValue)}
             }>
             {Relationship &&
              Relationship.map((item, index) => {
@@ -92,10 +109,19 @@ const[Relationship,setRelationship]=useState([{id: 1, name: 'Wife'},
           </Picker>
           </View>
 <View style={{flex:0.1}}></View>
-        <TouchableOpacity onPress={()=>props.navigation.navigate('TrakeeDate')}
+        <TouchableOpacity onPress={()=>{onRelation(),setloading(false)}}
         style={{borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
         width:'30%',alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,}}>
-  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Done</Text>
+            {loading ? 
+                <ActivityIndicator
+                  animating
+                  color={'white'}
+                  style={{
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                />:
+  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Done</Text>}
 </TouchableOpacity>
 
     </KeyboardAvoidingView>
