@@ -198,6 +198,7 @@ async function onupdate(){
         androidVariant='nativeAndroid'
         date={pdate} 
         style={{alignSelf:'center',}}
+        maximumDate={moment().subtract(10, "years").toDate()}
         onDateChange={txt=>{setDate(txt),setpDate(txt)}} />
 <TouchableOpacity 
 onPress={()=>{onupdate(),setloading(true)}}

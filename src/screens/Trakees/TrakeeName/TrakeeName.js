@@ -21,7 +21,10 @@ const[Name,setName]=useState('');
 const[countryCode,setcountryCode]=useState('PK +92');
 const[loading,setloading]=useState(false);
 async function onName(){
-  var newPostKey = database()
+  var regex = /^[a-zA-Z ]*$/;
+    const Firstvalid=regex.test(Name);
+    if(Firstvalid)
+ { var newPostKey = database()
   .ref('trakees/')
   .child(auth().currentUser?.uid)
   .push().key;
@@ -39,10 +42,17 @@ console.log('post key===\n', newPostKey);
        text: 'Trakee Name Added',
        backgroundColor: 'black',
      });
-  },1000)
- 
+  },1000)}else {
+    setTimeout(() => {
+      setloading(false);
+      Snackbar.show({
+        text: 'Kindly Enter Correct Name',
+        backgroundColor: 'black',
+      });
+    }, 300);
   
   }
+}
   return (
 
     <KeyboardAvoidingView

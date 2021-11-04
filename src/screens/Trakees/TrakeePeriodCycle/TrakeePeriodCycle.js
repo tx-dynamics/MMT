@@ -75,6 +75,7 @@ async function oncycle(){
               onChangeText={text => setName(text)}
               value={Name}
               placeholder='28'
+              maxLength={2}
               placeholderTextColor={theme.colors.s2}
               underlineColorAndroid="transparent"
               keyboardType='number-pad'

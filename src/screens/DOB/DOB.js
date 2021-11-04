@@ -83,6 +83,7 @@ await up.update(data).then
         textColor='white'
         fadeToColor='white'
         androidVariant='nativeAndroid'
+        maximumDate={moment().subtract(10, "years").toDate()}
         date={date} 
         style={{alignSelf:'center',}}
         onDateChange={txt=>{setDate(txt),console.log(txt)}}/>

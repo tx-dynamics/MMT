@@ -111,6 +111,7 @@ const Password = props => {
               value={currentPassword}
               placeholderTextColor={theme.colors.s2}
               underlineColorAndroid="transparent"
+              maxLength={15}
             />
           </View>
           <View  style={{marginTop:10}}>
@@ -122,6 +123,7 @@ const Password = props => {
               value={newPassword}
               placeholderTextColor={theme.colors.s2}
               underlineColorAndroid="transparent"
+              maxLength={15}
             />
           </View>
           <View  style={{marginTop:10}}>
@@ -133,11 +135,13 @@ const Password = props => {
               value={password}
               placeholderTextColor={theme.colors.s2}
               underlineColorAndroid="transparent"
+              maxLength={15}
             />
           </View>
         </View>
 
   <TouchableOpacity
+  disabled={password!==''&& newPassword!==''&& currentPassword!==''?false:true}
          onPress={()=>{updatePasword(),setLoading(true)}}
         style={{marginTop:25,borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
         width:'30%',alignSelf:'center',alignItems:'center',padding:15,borderRadius:10,}}>

@@ -21,13 +21,15 @@ const Home = props => {
   {id: 3, name: 'Daughter'},
   {id: 4, name: 'Family'},{id: 5, name: 'Friend'},
   {id: 6, name: 'Other'}]);
-  const[trakeeList,settrakeeList]=useState([{id: 1, name: 'Lopez Robertson'},
-  {id: 2, name: 'Katty Swan'},
-  {id: 3, name: 'Angela Diaz'},
-  {id: 4, name: 'Alice Perry'}]);
+  const[trakeeList,settrakeeList]=useState([
+  //   {id: 1, name: 'Lopez Robertson'},
+  // {id: 2, name: 'Katty Swan'},
+  // {id: 3, name: 'Angela Diaz'},
+  // {id: 4, name: 'Alice Perry'}
+]);
   const navigation=props.navigation;
   const isFocused = useIsFocused();
-  const[length,setlength]=useState(2);
+  const[length,setlength]=useState(1);
   const [modalVisible, setmodalVisible] = useState(false);
   useEffect(()=>{
     getTrakee();
@@ -48,8 +50,8 @@ const Home = props => {
         })
       })
      
-      // settrakeeList(arr);
-      // setlength(arr.length)
+      settrakeeList(arr);
+      setlength(arr.length)
       console.log('data===>',trakeeList);
     });
     
@@ -64,7 +66,11 @@ const Home = props => {
   ))
   const trakeelist=(({item, index})=>(
     <TouchableOpacity
-    onPress={()=>(setmodalVisible(false),navigation.navigate('Trakee',{screen:'TrakeeProfile'}))}
+    onPress={()=>(
+      setmodalVisible(false),
+      navigation.navigate('Trakee',
+      {screen:'TrakeeProfile',
+    params:{data:item}}))}
     style={styles.Trakeeliststyle}>
       <View style={{flexDirection:'row',alignItems:'center',width:'90%',paddingHorizontal:5,}}>
       <Image source={item.dp?{uri:item.dp}:db} style={{height:33,width:33,borderRadius:16}}/>

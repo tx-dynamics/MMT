@@ -20,6 +20,7 @@ import database from '@react-native-firebase/database';
 const TrakeeDate = props => {
 const [date, setDate] = useState(new Date());
 const[loading,setloading]=useState(false);
+const [pdate, setpDate] = useState(new Date());
 async function startDate(){
   const id= props.route.params.key;
   const data= database().ref('trakees/'+auth().currentUser?.uid+'/'+id+'/');
@@ -75,10 +76,11 @@ async function startDate(){
         textColor='white'
         fadeToColor='white'
         androidVariant='nativeAndroid'
-        date={date} 
+        date={pdate}
+        maximumDate={moment().subtract(10, "years").toDate()}
         style={{alignSelf:'center',}}
-        onDateChange={txt=>setDate(txt)} />
-<View style={{flex:0.1}}></View>
+        onDateChange={txt=>{setDate(txt),setpDate(txt)}} />
+        <View style={{flex:0.1}}></View>
         <TouchableOpacity onPress={()=>{startDate(),setloading(true)}}
         style={{borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,marginTop:10,
         width:'30%',alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,}}>

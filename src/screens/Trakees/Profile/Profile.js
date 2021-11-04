@@ -16,13 +16,25 @@ import {useIsFocused} from '@react-navigation/native';
 //firebase
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
-const Profile = props => {
+import moment from 'moment';
+const Profile = (props) => {
   const [modalVisible, setmodalVisible] = useState(false);
   const [date, setDate] = useState(new Date());
   const[uri,seturi]=useState();
   const[name,setname]=useState();
   const isFocused = useIsFocused();
- 
+  const[uid,setuid]=useState();
+  const [pdate, setpDate] = useState(new Date());
+  useEffect(()=>{
+    const {cycle,dp,id,item_count,lastDate,name}= props?.route?.params?.data;
+    if(props?.route?.params?.data)
+    {
+      seturi(dp);
+      setname(name);
+      setuid(uid);
+      setDate(lastDate);
+    }
+  },[]);
   return (
   <View style={{flex: 1, backgroundColor: '#ED618C'}}>
     <Header
@@ -32,13 +44,13 @@ const Profile = props => {
         leftComponent={<HeaderLeftComponent navigation={props.navigation} />}
         />
     <View style={{flex:0.4,}}>
-        <ImageBackground resizeMode='contain' borderRadius={53} source={db}
+        <ImageBackground  borderRadius={53} source={uri?{uri}:db}
         style={{height:106,width:106,alignSelf:'center',justifyContent:'flex-end',marginTop:25}}>
             <Image source={image} style={{height:26,width:26,alignSelf:'flex-end'}} />
         </ImageBackground>
         <View style={{flexDirection:'row',alignItems:'center',alignSelf:'center',marginTop:15}}>
             <Text style={{fontFamily:Fonts.Roboto,fontSize:22,
-            fontWeight:'500',color:'white'}}>Lopez Robertson</Text>
+            fontWeight:'500',color:'white'}}>{name}</Text>
              <Image source={edit} style={{height:12,width:12,marginLeft:10,tintColor:'white'}} />
         </View>
     </View>
@@ -78,7 +90,7 @@ style={{borderBottomWidth:1,borderColor:'white',paddingVertical:10,width:'85%',a
           {marginTop:30,flexDirection:'row',alignItems:"center"}]}>
           <TextInput
           style={{width:'70%'}}
-            value={date}
+            value={moment(date).format('DD MMM, YYYY')}
             placeholderTextColor={theme.colors.s2}
             underlineColorAndroid="transparent"
             editable={false}
@@ -90,9 +102,10 @@ style={{borderBottomWidth:1,borderColor:'white',paddingVertical:10,width:'85%',a
         textColor='white'
         fadeToColor='white'
         androidVariant='nativeAndroid'
-        date={date} 
+        date={pdate}
+        maximumDate={moment().subtract(10, "day").toDate()}
         style={{alignSelf:'center',marginTop:10}}
-        onDateChange={txt=>console.log(txt)} />
+        onDateChange={txt=>{setDate(txt),setpDate(txt)}} />
 <TouchableOpacity onPress={()=>setmodalVisible(false)}
         style={{borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
         width:'30%',alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,marginTop:20}}>

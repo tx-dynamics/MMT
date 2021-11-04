@@ -29,8 +29,12 @@ const SignupScreen = props => {
       fName,lName,email,userName,
       createdAt: new Date().toISOString(),
     };
-    console.log('registration data===>', regData);
-    //  Registration part
+    var regex = /^[a-zA-Z ]*$/;
+    const Firstvalid=regex.test(fName);
+    const sndvalid=regex.test(lName);
+ if(Firstvalid) {
+
+ if(sndvalid) {
     if (fName !==''&& lName!==''&&email!==''&&userName!=='') {
       console.log('I am here');
       auth()
@@ -81,12 +85,36 @@ const SignupScreen = props => {
         });
         });
     } else {
+      setTimeout(() => {
+        setLoading(false);
+        Snackbar.show({
+          text: 'Kindly Fill all the fields',
+          backgroundColor: 'black',
+        });
+      }, 300);
+    
+    }
+  } else {
+    setTimeout(() => {
       setLoading(false);
       Snackbar.show({
-        text: 'Kindly Fill all the fields',
+        text: 'Kindly Enter Correct Last Name',
         backgroundColor: 'black',
       });
-    }
+    }, 300);
+  
+  }
+  
+  }  else {
+    setTimeout(()=>{
+      setLoading(false);
+    Snackbar.show({
+      text: 'Kindly Enter Correct First Name',
+      backgroundColor: 'black',
+    });
+    },300)
+    
+  }
     setLoading(false);
   }
   return (
@@ -112,14 +140,16 @@ const SignupScreen = props => {
               value={fName}
               placeholderTextColor={theme.colors.s2}
               underlineColorAndroid="transparent"
+              maxLength={5}
             />
                <TextInput
             style={styles.smallInput}
               placeholder="Last Name"
-              onChangeText={text => setlName( text.trim())}
+              onChangeText={text => setlName( text)}
               value={lName}
               placeholderTextColor={theme.colors.s2}
               underlineColorAndroid="transparent"
+              maxLength={10}
             />
           </View>
           <View  style={{marginTop:10}}>
@@ -130,6 +160,7 @@ const SignupScreen = props => {
               value={userName}
               placeholderTextColor={theme.colors.s2}
               underlineColorAndroid="transparent"
+              maxLength={10}
             />
           </View>
           <View  style={{marginTop:10}}>
@@ -151,6 +182,7 @@ const SignupScreen = props => {
               value={password}
               placeholderTextColor={theme.colors.s2}
               underlineColorAndroid="transparent"
+              maxLength={15}
             />
           </View>
         

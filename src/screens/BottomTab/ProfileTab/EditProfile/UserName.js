@@ -41,7 +41,12 @@ const UserName = props => {
     })
   }
   async function onupdate(){
-    const data=database().ref('users/'+auth().currentUser?.uid);
+    var regex = /^[a-zA-Z ]*$/;
+    const Firstvalid=regex.test(fName);
+    const sndvalid=regex.test(lName);
+  if(Firstvalid){
+    if(sndvalid){
+   const data=database().ref('users/'+auth().currentUser?.uid);
     data.update({
       fName,lName,userName
     });
@@ -51,7 +56,26 @@ const UserName = props => {
          text: 'Data Updated',
          backgroundColor: 'black',
        });
-    },1000)
+    },1000)}
+    else {
+      setTimeout(() => {
+        setLoading(false);
+        Snackbar.show({
+          text: 'Kindly Enter Correct Last Name',
+          backgroundColor: 'black',
+        });
+      }, 300);
+    
+    }
+  }
+    else {
+      setTimeout(()=>{
+        setLoading(false);
+      Snackbar.show({
+        text: 'Kindly Enter Correct First Name',
+        backgroundColor: 'black',
+      });
+      },300)}
 
   }
   return (
@@ -79,6 +103,7 @@ const UserName = props => {
               value={fName}
               placeholderTextColor={theme.colors.s2}
               underlineColorAndroid="transparent"
+              maxLength={5}
             />
                <TextInput
             style={styles.smallInput}
@@ -87,11 +112,13 @@ const UserName = props => {
               value={lName}
               placeholderTextColor={theme.colors.s2}
               underlineColorAndroid="transparent"
+              maxLength={10}
             />
           </View>
           <View  style={{marginTop:10}}>
             <TextInput
               style={styles.InputContainer}
+              maxLength={10}
               placeholder="Username"
               onChangeText={text => setuserName( text)}
               value={userName}
