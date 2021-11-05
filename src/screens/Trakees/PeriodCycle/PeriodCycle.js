@@ -15,10 +15,32 @@ import { Fonts } from '../../../utils/Fonts';
 import {Header} from 'react-native-elements';
 import HeaderCenterComponent from '../../../components/HeaderCenterComponent';
 import HeaderLeftComponent from '../../../components/HeaderLeftComponent';
+import Snackbar from 'react-native-snackbar';
+//firebase
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 const PeriodCycle = props => {
 const[Name,setName]=useState('');
-const[countryCode,setcountryCode]=useState('PK +92');
-const[loading,setloading]=useState(false)
+const[loading,setloading]=useState(false);
+useEffect(()=>{
+  const item= props?.route?.params?.cycle;
+  setName(item);
+},[]);
+async function updateCycle(){
+  const id=props.route.params.key;
+  const data= database().ref('trakees/'+auth().currentUser?.uid+'/'+id+'/');
+  data.update({
+    cycle:Name
+  });
+  setTimeout(()=>{
+    setloading(false);
+    props.navigation.navigate('Root',{screen:'Home'});
+    Snackbar.show({
+       text: 'Trakee Date Updated',
+       backgroundColor: 'black',
+     });
+  },1000)
+}
   return (
 
     <KeyboardAvoidingView
@@ -52,10 +74,21 @@ const[loading,setloading]=useState(false)
     </View>
       
 <View style={{flex:0.1}}></View>
-        <TouchableOpacity onPress={()=>props.navigation.goBack()}
+        <TouchableOpacity
+        disabled={Name===''?true:false}
+        onPress={()=>{updateCycle(),setloading(true)}}
         style={{borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
         width:'25%',alignSelf:'center',alignItems:'center',padding:10,borderRadius:10,}}>
-  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Save</Text>
+            {loading ? 
+                <ActivityIndicator
+                  animating
+                  color={'white'}
+                  style={{
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                />:
+  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Save</Text>}
 </TouchableOpacity>
 
     </KeyboardAvoidingView>

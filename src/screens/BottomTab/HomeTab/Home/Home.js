@@ -45,23 +45,66 @@ const Home = props => {
           name:dat?.Name,
           cycle:dat?.cycle,
           dp:dat?.dp,
-          item_count:dat?.item_count,
+          item_count: dat?.items_count,
           lastDate:dat?.lastDate
         })
       })
-     
       settrakeeList(arr);
       setlength(arr.length)
-      console.log('data===>',trakeeList);
+      console.log('data===>',arr);
     });
     
   }
   const ontrakeeShow=(({item, index})=>(
 <View style={styles.flatliststyle}>
-  <View style={{flexDirection:'row',alignItems:'center',width:'90%',justifyContent:'space-between'}}>
- <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,marginLeft:15,color:'#383838'}}>{item.name}</Text>
- <Image source={line} style={{width:207,height:5,borderRadius:10,marginLeft:15,alignItems:'flex-end',color:'#383838'}}/>
- </View>
+{item.item_count===1 &&
+<View style={{flexDirection:'row',backgroundColor:'#FFF2F6',borderRadius:11,
+  alignItems:'center',width:'100%',justifyContent:'space-between',paddingVertical:13}}>
+ <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,
+ marginLeft:15,color:'#383838'}}>Wife</Text>
+ <Image source={line} 
+ style={{width:207,height:5,borderRadius:10,alignItems:'flex-end',color:'#383838',right:10}}/>
+ </View>}
+ {item.item_count===2 &&
+<View style={{flexDirection:'row',backgroundColor:'#FFF2F6',borderRadius:11,
+  alignItems:'center',width:'100%',justifyContent:'space-between',paddingVertical:13}}>
+ <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,
+ marginLeft:15,color:'#383838'}}>Girlfriend</Text>
+ <Image source={line} 
+ style={{width:207,height:5,borderRadius:10,alignItems:'flex-end',color:'#383838',right:10}}/>
+ </View>}
+ {item.item_count===3 &&
+<View style={{flexDirection:'row',backgroundColor:'#FFF2F6',borderRadius:11,
+  alignItems:'center',width:'100%',justifyContent:'space-between',paddingVertical:13}}>
+ <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,
+ marginLeft:15,color:'#383838'}}>Daughter</Text>
+ <Image source={line} 
+ style={{width:207,height:5,borderRadius:10,alignItems:'flex-end',color:'#383838',right:10}}/>
+ </View>}
+ {item.item_count===4 &&
+<View style={{flexDirection:'row',backgroundColor:'#FFF2F6',borderRadius:11,
+  alignItems:'center',width:'100%',justifyContent:'space-between',paddingVertical:13}}>
+ <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,
+ marginLeft:15,color:'#383838'}}>Family</Text>
+ <Image source={line} 
+ style={{width:207,height:5,borderRadius:10,alignItems:'flex-end',color:'#383838',right:10}}/>
+ </View>}
+ {item.item_count===5 &&
+<View style={{flexDirection:'row',backgroundColor:'#FFF2F6',borderRadius:11,
+  alignItems:'center',width:'100%',justifyContent:'space-between',paddingVertical:13}}>
+ <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,
+ marginLeft:15,color:'#383838'}}>Friend</Text>
+ <Image source={line} 
+ style={{width:207,height:5,borderRadius:10,alignItems:'flex-end',color:'#383838',right:10}}/>
+ </View>}
+ {item.item_count===6 &&
+<View style={{flexDirection:'row',backgroundColor:'#FFF2F6',borderRadius:11,
+  alignItems:'center',width:'100%',justifyContent:'space-between',paddingVertical:13}}>
+ <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,
+ marginLeft:15,color:'#383838'}}>Other</Text>
+ <Image source={line} 
+ style={{width:207,height:5,borderRadius:10,alignItems:'flex-end',color:'#383838',right:10}}/>
+ </View>}
 </View>
   ))
   const trakeelist=(({item, index})=>(
@@ -125,7 +168,7 @@ const Home = props => {
         <FlatList
           style={{marginTop:20,width:'90%',alignSelf:'center',}}
           showsVerticalScrollIndicator={false}
-          data={trakee}
+          data={trakeeList}
           renderItem={ontrakeeShow}
           />
           </View>

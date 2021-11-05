@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
-  Image,FlatList,TouchableOpacity, TextInput
+  Image,ActivityIndicator,TouchableOpacity, TextInput
 } from 'react-native';
 import {db,line} from '../../../../assets';
 import { Fonts } from '../../../../utils/Fonts';
@@ -12,8 +12,30 @@ import theme from '../../../../theme';
 import {heart} from '../../../../assets';
 import HeaderLeftComponent from '../../../../components/HeaderLeftComponent';
 import HeaderRight from '../../../../components/HeaderRight';
+import Snackbar from 'react-native-snackbar';
+//firebase
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 const AddNote = props => {
     const[note,setnote]=useState('');
+    const[loading,setloading]=useState(false);
+async function sendNote(){
+  const id=props.route?.params?.uid;
+  const day=props.route?.params?.day;
+  console.log(id,'\n',day);
+  const data =database().ref('Calendar/'+id+'/'+day+'/');
+     data.set({
+       note
+     })
+     setTimeout(()=>{
+      setloading(false);
+      props.navigation.push('Calendar');
+      Snackbar.show({
+         text: `Notes Added on Date ${day}`,
+         backgroundColor: 'black',
+       });
+    },1500)
+    }
   return (
   <View style={{flex: 1, backgroundColor: 'white'}}>
     <Header
@@ -43,14 +65,24 @@ const AddNote = props => {
               underlineColorAndroid="transparent"
             />
         </View>
-        <TouchableOpacity onPress={()=>props.navigation.goBack()} style={{position:'absolute',bottom:10,width:'90%',
+        <TouchableOpacity onPress={()=>{sendNote(),setloading(true)}} style={{position:'absolute',bottom:10,width:'90%',
         alignSelf:'center',padding:12,
         backgroundColor:'#C62252',
         alignItems:'center',borderRadius:10
         }}>
+           {loading ?
+                <ActivityIndicator
+                  animating
+                  color={'white'}
+                  size={25}
+                  style={{
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                />:
         <Text style={{
                 fontFamily:Fonts.Poppins,
-                fontWeight:'500',color:'white',fontSize:17}} >Save</Text>
+                fontWeight:'500',color:'white',fontSize:17}} >Save</Text>}
         </TouchableOpacity> 
     </View>
   );

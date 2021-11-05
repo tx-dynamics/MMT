@@ -13,19 +13,101 @@ import HeaderLeftComponent from '../../../../components/HeaderLeftComponent';
 import {Picker} from '@react-native-picker/picker';
 import { Calendar } from 'react-native-calendars';
 import AntDesign from 'react-native-vector-icons/AntDesign'
+//firebase
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
+import {useIsFocused} from '@react-navigation/native';
 const Calendars = props => {
-  const[Relationship,setRelationship]=useState([{id: 1, name: 'Wife'},
-{id: 2, name: 'Girlfriend'},
-{id: 3, name: 'Daughter'},
-{id: 4, name: 'Family'},{id: 5, name: 'Friend'},
-{id: 6, name: 'Other'},]);
+const[Relationship,setRelationship]=useState([
+//   {id: 1, name: 'Wife'},
+// {id: 2, name: 'Girlfriend'},
+// {id: 3, name: 'Daughter'},
+// {id: 4, name: 'Family'},{id: 5, name: 'Friend'},
+// {id: 6, name: 'Other'},
+]);
+const isFocused = useIsFocused();
 const[items_count,setitems_count]=useState('');
+const[uid,setuid]=useState('');
+const [cal,setcal]=useState([]);
+useEffect(()=>{
+  setRelationship([]);
+  setuid('');
+  setcal([]);
+  getTrakee();
+},[isFocused])
+async function getTrakee(){
+  const data =database().ref('trakees/'+auth().currentUser.uid+'/');
+  let arr=[];
+  data.on('value',childern=>{
+    childern.forEach(item=>{
+      const dat=item?.val();
+      arr.push({
+        id: dat?.items_count,
+        uid:item.key,
+        name:dat?.items_count==1? 'Wife':dat?.items_count==2?
+        'Girlfriend':dat?.items_count==3?'Daughter':dat?.items_count==4?'Family':dat?.items_count==5?'Friend':'Other',
+      })
+    })
+    setRelationship(arr);
+    if(arr.length>0){
+      setuid(arr[0]?.uid);
+      selectDayes(arr[0]?.uid);
+    }
+  });
+  
+}
+async function selectDayes(id){
+console.log('here==<',id);
+const dta= database().ref('Calendar/'+id+'/');
+let arr=[];
+dta.on('value',chids=>{
+  chids.forEach(items=>
+    {
+      console.log(items.key)
+      const va=items.val();
+      arr.push({
+        id:items.key,
+        note:items.val()?.note
+      })
+  })
+  console.log('datanew',arr);
+  setcal(arr);
+})
+
+}
 const renderArrow = (direction) => {
   if(direction === 'left') {
       return <AntDesign name='left' size={18} color={'#C62252'}/>
   } else {
       return  <AntDesign name='right' size={18} color={'#C62252'}/>
   }
+}
+function seletedval(value){
+  setitems_count(value);
+  Relationship.map(items=>{
+    if(items.id===value){
+      console.log(items.name);
+      setuid(items?.uid);
+      selectDayes(items?.uid);
+    }
+  })
+}
+function navis(ids,dates){
+console.log(ids,'\n',dates);
+let add=true;
+cal.find(item=>{
+  if(item.id===dates){
+    console.log('dates',item.note);
+    add=false;
+    console.log('dates',add);
+    add=false;
+    props.navigation.push('ShowNote',{uid:ids,day:dates,note:item.note});
+  } 
+})
+if(add){
+  console.log('hi',add);
+  props.navigation.navigate('Note',{uid:ids,day:dates});
+}
 }
   return (
   <View style={{flex: 1, backgroundColor: 'white'}}>
@@ -57,7 +139,7 @@ const renderArrow = (direction) => {
             }}
             dropdownIconColor='black'
             onValueChange={(itemValue, itemIndex) =>
-              setitems_count(itemValue)
+              seletedval(itemValue)
             }>
             {Relationship &&
              Relationship.map((item, index) => {
@@ -103,56 +185,29 @@ const renderArrow = (direction) => {
             style={[ {height:330}]}
             dayComponent={({date, state}) => {
               return (
-              <View >
-                {
-                   date.dateString==='2021-11-10'? 
+              <View style={{flexDirection:'row',alignItems:'center'}}>
+                {cal.map( item=>
+               (date.dateString===item.id? 
                    <View style={{flexDirection:'row',alignItems:'center'}}>
-                   <Image source={ellipse} resizeMode='contain' style={{height:10.37,width:10.91}} />
-                 <Text style={{textAlign: 'center', color: state === 'disabled' ? 'white' : '#383838',
+                   <Image source={notes} resizeMode='contain' style={{height:10.37,width:10.91}} />
+                 {/* <Text style={{textAlign: 'center', color: state === 'disabled' ? 'white' : '#383838',
                  fontFamily:Fonts.Poppins,fontSize:17,fontWeight:'400'}}>
                    {date.day}
-                   </Text>
-                   </View>:
-                   date.dateString==='2021-11-11'? 
-                  <TouchableOpacity 
-                  onPress={()=>props.navigation.navigate('ShowNote')}
-                  style={{flexDirection:'row',alignItems:'center'}}>
-                  <Image source={notes} resizeMode='contain' style={{height:10.37,width:10.91}} />
-                <Text style={{textAlign: 'center', color: state === 'disabled' ? 'white' : '#383838',
-                fontFamily:Fonts.Poppins,fontSize:17,fontWeight:'400'}}>
-                  {date.day}
-                  </Text>
-                  </TouchableOpacity>:
-                   date.dateString==='2021-11-15'? 
-                   <View style={{flexDirection:'row',alignItems:'center'}}>
-                   <Image source={play} resizeMode='contain' style={{height:10.37,width:10.91}} />
-                 <Text style={{textAlign: 'center', color: state === 'disabled' ? 'white' : '#383838',
-                 fontFamily:Fonts.Poppins,fontSize:17,fontWeight:'400'}}>
-                   {date.day}
-                   </Text>
-                   </View>:
-                  date.dateString==='2021-11-17'? 
-                    <View style={{flexDirection:'row',alignItems:'center'}}>
-                    <Image source={line} resizeMode='contain' style={{height:25,width:10}} />
-                  <Text style={{textAlign: 'center', color: state === 'disabled' ? 'white' : '#383838',
-                  fontFamily:Fonts.Poppins,fontSize:17,fontWeight:'400'}}>
-                    {date.day}
-                    </Text>
-                    </View>:  date.dateString==='2021-11-22'? 
-                    <View style={{flexDirection:'row',alignItems:'center'}}>
-                    <Image source={triangle} resizeMode='contain' style={{height:10.37,width:10.91}} />
-                  <Text style={{textAlign: 'center', color: state === 'disabled' ? 'white' : '#383838',
-                  fontFamily:Fonts.Poppins,fontSize:17,fontWeight:'400'}}>
-                    {date.day}
-                    </Text>
-                    </View>:
-                    <TouchableOpacity onPress={()=>props.navigation.navigate('Note')}>
+                   </Text> */}
+                   </View>:null
+                   
+                  ))
+                  }
+                   <TouchableOpacity
+                   disabled={Relationship.length>0?false:true}
+                  //  onPress={()=>props.navigation.navigate('Note',{uid,day:date.dateString})}
+                  onPress={()=>navis(uid,date.dateString)}
+                   >
                   <Text style={{textAlign: 'center', color: state === 'disabled' ? 'white' : '#383838',
                   fontFamily:Fonts.Poppins,fontSize:17,fontWeight:'400'}}>
                     {date.day}
                   </Text>
                   </TouchableOpacity>
-                  }
                 </View>
     );
 }}

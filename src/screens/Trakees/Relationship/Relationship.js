@@ -8,23 +8,43 @@ import {
   ActivityIndicator,KeyboardAvoidingView,Platform,
 } from 'react-native';
 import theme from '../../../theme';
-import {upload,heart} from '../../../assets';
-import styles from '../../PhoneNumber/styles';
 import {Picker} from '@react-native-picker/picker';
-// import CountryCodeList from 'react-native-country-code-list'
 import { Fonts } from '../../../utils/Fonts';
 import {Header} from 'react-native-elements';
 import HeaderCenterComponent from '../../../components/HeaderCenterComponent';
 import HeaderLeftComponent from '../../../components/HeaderLeftComponent';
+import Snackbar from 'react-native-snackbar';
+//firebase
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 const Relationship = props => {
-const[items_count,setitems_count]=useState('');
+const[items_count,setitems_count]=useState(1);
 const[loading,setloading]=useState(false);
-const [uri,seturi]=useState('');
 const[Relationship,setRelationship]=useState([{id: 1, name: 'Wife'},
 {id: 2, name: 'Girlfriend'},
 {id: 3, name: 'Daughter'},
 {id: 4, name: 'Family'},{id: 5, name: 'Friend'},
-{id: 6, name: 'Other'},])
+{id: 6, name: 'Other'},]);
+useEffect(()=>{
+  const item= props?.route?.params?.item_count;
+ setitems_count(item);
+},[]);
+async function onRelation(){
+  const id= props.route.params.key;
+const data=database().ref('trakees/'+auth().currentUser?.uid+'/'+id+'');
+data.update({
+  items_count
+});
+setTimeout(()=>{
+  setloading(false);
+  props.navigation.navigate('Root',{screen:'Home'});
+  Snackbar.show({
+     text: 'Trakee Relation Updated',
+     backgroundColor: 'black',
+   });
+},400)
+}
+
   return (
   <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -43,17 +63,20 @@ const[Relationship,setRelationship]=useState([{id: 1, name: 'Wife'},
          style={{fontFamily:Fonts.Roboto,fontSize:15,width:'90%',alignSelf:'center',
          fontWeight:'300',color:'#F3A3BC',}}>You can change your Trackee Relationship here</Text>
          <View style={{flex:0.03}}></View>
+        <View style={{width:'90%',alignSelf:'center',borderWidth:1,borderColor:'#ED6877'}}>
          <Picker
-         selectedValue={items_count}
+            selectedValue={items_count}
             placeholder="Selecte No of Stores"
             style={{
               fontSize: 12,
-              fontWeight: '600',paddingVertical: 10,
+              fontWeight: '600',
+              paddingVertical: 10,
               borderWidth: 10,
-              width: '90%',
+              width: '100%',
               borderRadius: 10,
-              backgroundColor:'white',
-              color: theme.colors.primary,alignSelf:'center',
+              backgroundColor:theme.colors.p1,
+              //color:'white'
+              color: 'white',alignSelf:'center',
             }}
             mode='dropdown'
             itemStyle={{
@@ -62,7 +85,7 @@ const[Relationship,setRelationship]=useState([{id: 1, name: 'Wife'},
             }}
             dropdownIconColor='#FFB5CC'
             onValueChange={(itemValue, itemIndex) =>
-              setitems_count(itemValue)
+             { setitems_count(itemValue),console.log(itemValue)}
             }>
             {Relationship &&
              Relationship.map((item, index) => {
@@ -74,7 +97,7 @@ const[Relationship,setRelationship]=useState([{id: 1, name: 'Wife'},
                         label={item.name}
                         value={item.id}
                         style={{fontFamily:Fonts.Poppins,fontSize:15,fontWeight:'300'}}
-                        backgroundColor={'#FFB5CC'}
+                        backgroundColor={'white'}
                       />
                     );
                   default:
@@ -83,17 +106,27 @@ const[Relationship,setRelationship]=useState([{id: 1, name: 'Wife'},
                         key={index}
                         label={item.name}
                         value={item.id}
-                        backgroundColor={'#FFB5CC'}
+                        backgroundColor={'white'}
                       />
                     );
                 }
               })}
           </Picker>
+          </View>
 <View style={{flex:0.1}}></View>
-        <TouchableOpacity onPress={()=>props.navigation.navigate('TrakeeProfile')}
+        <TouchableOpacity onPress={()=>{onRelation(),setloading(true)}}
         style={{borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
         width:'30%',alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,}}>
-  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Save</Text>
+           {loading ? 
+                <ActivityIndicator
+                  animating
+                  color={'white'}
+                  style={{
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                />:
+  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Save</Text>}
 </TouchableOpacity>
 
     </KeyboardAvoidingView>

@@ -2,20 +2,37 @@ import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
-  Image,FlatList,TouchableOpacity, TextInput, Dimensions
+  ActivityIndicator,TouchableOpacity, 
 } from 'react-native';
-import {db,line} from '../../../../assets';
 import { Fonts } from '../../../../utils/Fonts';
 import {Header} from 'react-native-elements';
-import HeaderCenterComponent from '../../../../components/HeaderCenterComponent';
 import theme from '../../../../theme';
 import {heart} from '../../../../assets';
 import HeaderLeftComponent from '../../../../components/HeaderLeftComponent';
-import HeaderRight from '../../../../components/HeaderRight';
-import moment from 'moment';
+import Snackbar from 'react-native-snackbar';
+//firebase
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 const ShowNotes = props => {
-    const[date,setdate]=useState(new Date())
-    const[note,setnote]=useState('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
+    const[date,setdate]=useState(new Date());
+    const[loading,setloading]=useState(false);
+    const[notes,setnote]=useState('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
+    const{uid,day,note}=props.route?.params;
+    function ondel(){
+    console.log(uid,day,note);
+    const del = database().ref('Calendar/'+uid).child(day);
+    del.remove().then(() =>{
+      setloading(false);
+      props.navigation.goBack();
+      Snackbar.show({
+         text: 'Notes Deleted Successfully',
+         backgroundColor: 'black',
+       });
+    })
+    .catch(err=>{console.log(err)})
+  }
+  const dates= new Date(day);
+  console.log(dates,'\n',note);
   return (
   <View style={{flex: 1, backgroundColor: 'white'}}>
     <Header
@@ -25,7 +42,10 @@ const ShowNotes = props => {
         height:48,width:'100%',}}>
           <Text numberOfLines={1} style={{fontSize: 24,
     fontFamily: Fonts.Poppins,
-    color: 'white',fontWeight:'600'}}>{`${moment(date).format('DD MMM, YYYY')}`}</Text>
+    color: 'white',fontWeight:'600'}}>
+      {/* {`${moment(day).format('d MMM, YYYY')}`} */}
+      Quick Note
+      </Text>
         </View>}
         leftComponent={<HeaderLeftComponent navigation={props.navigation} />}
         />
@@ -42,11 +62,21 @@ const ShowNotes = props => {
         </View>
         <View style={{flex:0.06}}></View>
         <View style={{flexDirection:'row',width:'90%',alignSelf:'center',justifyContent:'space-between'}}>
-        <TouchableOpacity onPress={()=>props.navigation.goBack()}
+        <TouchableOpacity onPress={()=>{ondel(),setloading(true)}}
         style={{marginTop:25,borderColor:'#FFB5CC',borderWidth:1,backgroundColor:'white',
         width:'45%',alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,}}>
+            {loading ?
+                <ActivityIndicator
+                  animating
+                  color={theme.colors.p1}
+                  size={25}
+                  style={{
+                    color: 'white',
+                    textAlign: 'center',
+                  }}
+                />:
   <Text style={{color:theme.colors.primary,fontWeight:'500',
-  fontFamily:Fonts.Poppins,fontSize:17}}>Delete</Text>
+  fontFamily:Fonts.Poppins,fontSize:17}}>Delete</Text>}
 </TouchableOpacity>
 <TouchableOpacity onPress={()=>props.navigation.goBack()}
         style={{marginTop:25,borderColor:'#FFB5CC',borderWidth:1,backgroundColor:'#C62252',
