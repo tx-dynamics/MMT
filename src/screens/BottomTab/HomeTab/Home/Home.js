@@ -17,10 +17,6 @@ import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 const Home = props => {
   const[trakeeList,settrakeeList]=useState([
-  //   {id: 1, name: 'Lopez Robertson'},
-  // {id: 2, name: 'Katty Swan'},
-  // {id: 3, name: 'Angela Diaz'},
-  // {id: 4, name: 'Alice Perry'}
 ]);
   const navigation=props.navigation;
   const isFocused = useIsFocused();

@@ -13,6 +13,7 @@ import HeaderLeftComponent from '../../../../components/HeaderLeftComponent';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useIsFocused} from '@react-navigation/native';
 import Entypo from 'react-native-vector-icons/Entypo';
+import Snackbar from 'react-native-snackbar';
 //firebase
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
@@ -32,16 +33,18 @@ const Profile = props => {
     })
   }
   async function onlogout(){
+   
     auth()
       .signOut()
       .then(() => {
         setloading(false);
         props.navigation.navigate('Auth',{screen:'Signin'});
-        Snackbar.show({
-          text: 'Bye Bye',
-          backgroundColor: 'black',
-          duration: Snackbar.LENGTH_LONG,
-        });
+        setTimeout(() => {
+          Snackbar.show({
+            text: 'Logout Succesfully',
+            backgroundColor: theme.colors.primary,
+          });
+        }, 300);
       });
   }
   return (

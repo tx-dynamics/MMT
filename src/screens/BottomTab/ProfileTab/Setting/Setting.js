@@ -20,7 +20,7 @@ const Setting = props => {
     <Header
         backgroundColor={ theme.colors.p1}
         containerStyle={{borderBottomLeftRadius:15,borderBottomRightRadius:15,borderBottomWidth:0}}
-        centerComponent={<HeaderCenterComponent name='Settings'/>}
+        centerComponent={<HeaderCenterComponent name='Password'/>}
         leftComponent={<HeaderLeftComponent navigation={props.navigation} />}
         />
         <TouchableOpacity

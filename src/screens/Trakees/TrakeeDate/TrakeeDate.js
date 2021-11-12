@@ -77,7 +77,7 @@ async function startDate(){
         fadeToColor='white'
         androidVariant='nativeAndroid'
         date={pdate}
-        maximumDate={moment().subtract(10, "years").toDate()}
+        maximumDate={new Date()}
         style={{alignSelf:'center',}}
         onDateChange={txt=>{setDate(txt),setpDate(txt)}} />
         <View style={{flex:0.1}}></View>
