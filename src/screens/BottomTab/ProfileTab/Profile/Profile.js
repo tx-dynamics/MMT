@@ -25,7 +25,6 @@ const Profile = props => {
     loadData();
   },[isFocused])
   async function loadData(){
-    
     const data=database().ref('users/'+auth().currentUser?.uid+'/');
     data.on('value',child=>{
       seturi(child?.val()?.dp);

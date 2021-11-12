@@ -16,11 +16,6 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 const Home = props => {
-  const[trakee,settrakee]=useState([{id: 1, name: 'Wife'},
-  {id: 2, name: 'Girlfriend'},
-  {id: 3, name: 'Daughter'},
-  {id: 4, name: 'Family'},{id: 5, name: 'Friend'},
-  {id: 6, name: 'Other'}]);
   const[trakeeList,settrakeeList]=useState([
   //   {id: 1, name: 'Lopez Robertson'},
   // {id: 2, name: 'Katty Swan'},
@@ -32,6 +27,7 @@ const Home = props => {
   const[length,setlength]=useState(1);
   const [modalVisible, setmodalVisible] = useState(false);
   useEffect(()=>{
+    settrakeeList([]);
     getTrakee();
   },[isFocused])
   async function getTrakee(){
@@ -50,7 +46,7 @@ const Home = props => {
         })
       })
       settrakeeList(arr);
-      setlength(arr.length)
+      setlength(arr?.length)
       console.log('data===>',arr);
     });
     
