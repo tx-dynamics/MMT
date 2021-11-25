@@ -26,3 +26,4 @@ export const setting = require('./images/setting.png');
 export const ellipse = require('./images/ellipse.png');
 export const circle = require('./images/circle.png');
 export const online = require('./images/online.png');
+export const cc = require('./images/cc.png');

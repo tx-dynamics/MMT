@@ -8,7 +8,7 @@ import { Fonts } from '../../../../utils/Fonts';
 import {Header} from 'react-native-elements';
 import HeaderCenterComponent from '../../../../components/HeaderCenterComponent';
 import theme from '../../../../theme';
-import {ellipse,notes,play,line,triangle,circle} from '../../../../assets';
+import {ellipse,notes,play,line,triangle,circle,cc} from '../../../../assets';
 import HeaderLeftComponent from '../../../../components/HeaderLeftComponent';
 import {Picker} from '@react-native-picker/picker';
 import { Calendar } from 'react-native-calendars';
@@ -19,16 +19,12 @@ import database from '@react-native-firebase/database';
 import {useIsFocused} from '@react-navigation/native';
 const Calendars = props => {
 const[Relationship,setRelationship]=useState([
-//   {id: 1, name: 'Wife'},
-// {id: 2, name: 'Girlfriend'},
-// {id: 3, name: 'Daughter'},
-// {id: 4, name: 'Family'},{id: 5, name: 'Friend'},
-// {id: 6, name: 'Other'},
 ]);
 const isFocused = useIsFocused();
 const[items_count,setitems_count]=useState('');
 const[uid,setuid]=useState('');
 const [cal,setcal]=useState([]);
+const[cycle,setcycle]=useState('');
 useEffect(()=>{
   setRelationship([]);
   setuid('');
@@ -46,31 +42,29 @@ async function getTrakee(){
         uid:item.key,
         name:dat?.items_count==1? 'Wife':dat?.items_count==2?
         'Girlfriend':dat?.items_count==3?'Daughter':dat?.items_count==4?'Family':dat?.items_count==5?'Friend':'Other',
+        cycle:dat.cycle
       })
     })
     setRelationship(arr);
     if(arr.length>0){
       setuid(arr[0]?.uid);
       selectDayes(arr[0]?.uid);
+      setcycle(arr[0].cycle);
     }
   });
-  
 }
 async function selectDayes(id){
-console.log('here==<',id);
 const dta= database().ref('Calendar/'+id+'/');
 let arr=[];
 dta.on('value',chids=>{
   chids.forEach(items=>
     {
-      console.log(items.key)
       const va=items.val();
       arr.push({
         id:items.key,
         note:items.val()?.note
       })
   })
-  console.log('datanew',arr);
   setcal(arr);
 })
 
@@ -93,7 +87,6 @@ function seletedval(value){
   })
 }
 function navis(ids,dates){
-console.log(ids,'\n',dates);
 let add=true;
 cal.find(item=>{
   if(item.id===dates){
@@ -139,7 +132,7 @@ if(add){
             }}
             dropdownIconColor='black'
             onValueChange={(itemValue, itemIndex) =>
-              seletedval(itemValue)
+             { seletedval(itemValue), setcycle(Relationship[itemValue]?.cycle);}
             }>
             {Relationship &&
              Relationship.map((item, index) => {
@@ -186,6 +179,8 @@ if(add){
             dayComponent={({date, state}) => {
               return (
               <View style={{flexDirection:'row',alignItems:'center'}}>
+                {Number (cycle)=== date.day&&
+                   <Image source={play} resizeMode='contain' style={{height:10.37,width:10.91,}} />}
                 {cal.map( item=>
                (date.dateString===item.id? 
                    <View style={{flexDirection:'row',alignItems:'center'}}>
@@ -204,7 +199,8 @@ if(add){
                   onPress={()=>navis(uid,date.dateString)}
                    >
                   <Text style={{textAlign: 'center', color: state === 'disabled' ? 'white' : '#383838',
-                  fontFamily:Fonts.Poppins,fontSize:17,fontWeight:'400'}}>
+                  fontFamily:Fonts.Poppins,fontSize:17,fontWeight:'400',marginRight:date.day===Number (cycle)?10:0
+                  }}>
                     {date.day}
                   </Text>
                   </TouchableOpacity>
