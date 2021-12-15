@@ -14,10 +14,22 @@ import { Fonts } from '../../utils/Fonts';
 import Snackbar from 'react-native-snackbar';
 //firebase
 import auth from '@react-native-firebase/auth';
+import PushNotification from 'react-native-push-notification';
 const Signin = props => {
 const[email,setemail]=useState('');
 const[password,setpassword]=useState('');
-const[loading,setloading]=useState(false)
+const[loading,setloading]=useState(false);
+useEffect(() => {
+  createChannels();
+}, []);
+const createChannels = () => {
+  PushNotification.createChannel(
+      {
+          channelId: "mmt",
+          channelName: "MMT"
+      }
+  )
+}
 async function login() {
   if (email !== '' && password !== '') {
     auth()
