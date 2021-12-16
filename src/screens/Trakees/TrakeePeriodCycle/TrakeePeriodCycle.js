@@ -31,7 +31,7 @@ async function oncycle(){
   setTimeout(()=>{
     setloading(false);
     setName('');
-    props.navigation.navigate('Root',{screen:'Home'});
+    props.navigation.push('Root',{screen:'Home'});
     Snackbar.show({
        text: 'Trakee Period Cycle Added',
        backgroundColor: 'black',

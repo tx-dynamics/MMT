@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
-  Image,FlatList,TouchableOpacity,Modal, Dimensions,ActivityIndicator
+  Image,FlatList,TouchableOpacity,Modal, Dimensions,ActivityIndicator,TouchableWithoutFeedback
 } from 'react-native';
 import theme from '../../../../theme';
 import {db,} from '../../../../assets';
@@ -26,6 +26,7 @@ const Home = props => {
   const [modalVisible, setmodalVisible] = useState(false);
   const [onPeriod, setonPeriod] = useState(false);
   const[itemes,setitemes]=useState();
+  const[Name,setName]=useState();
   const[loading,setloading]=useState(false);
   useEffect(()=>{
     settrakeeList([]);
@@ -34,8 +35,7 @@ const Home = props => {
   
   },[isFocused]);
   const handleNotification = () => {
-
-    PushNotification.cancelAllLocalNotifications();
+    // PushNotification.cancelAllLocalNotifications();
 
     // PushNotification.localNotification({
     //     channelId: "mmt",
@@ -45,9 +45,12 @@ const Home = props => {
     //     color: "red",
     //     id: index
     // });
+    const ndate=new Date().toJSON();
     trakeeList.map(items=>{
-      if( new Date(items.lastDate)===new Date() && items?.ismute){
-        console.log( new Date(items.lastDate));
+      console.log( moment(items.lastDate));
+      console.log(new Date(Date.now()));
+      if(  moment(items.lastDate).format('yy/MM/DD')=== new Date(Date.now()) ){
+        console.log( 'hwew',items.lastDate);
         PushNotification.localNotificationSchedule({
           channelId: "mmt",
           title: "Period Notification",
@@ -70,6 +73,13 @@ const Home = props => {
   async function getTrakee(){
     settrakeeList([]);
     const data =database().ref('trakees/'+auth().currentUser.uid+'/');
+    const userdataNAme = database().ref("users/" + auth().currentUser.uid);
+    userdataNAme.on("value", (userdata) => {
+     
+      if (userdata.val()?.fName && userdata.val()?.lName) {
+        setName(userdata.val().fName + " " + userdata.val().lName);
+      }
+    });
     let arr=[];
     data.on('value',childern=>{
       childern.forEach(item=>{
@@ -92,7 +102,7 @@ const Home = props => {
     });
     // handleNotification();
   }
-  const ontrakeeShow=(({item, index})=>(
+const ontrakeeShow=(({item, index})=>(
 <TouchableOpacity
 onPress={()=>{setitemes(item),setonPeriod(!onPeriod)}}
 style={styles.flatliststyle}>
@@ -104,10 +114,10 @@ style={styles.flatliststyle}>
  marginLeft:15,color:'#383838'}}>Wife</Text></View>
  <View style={{flexDirection:'row',width:'70%'}}>
       
-      <Text >Start Date: </Text>
-      <Text>{moment(item.lastDate).format('DD/MM')}</Text>
-      <Text style={{marginLeft:10}}>End Date: </Text>
-     <Text>{moment(item.endDate).format('DD/MM')}</Text>
+      <Text style={{fontWeight:'700'}}>Start: </Text>
+      <Text>{moment(item.lastDate).format('DD/MM/yy')}</Text>
+      <Text style={{marginLeft:10,fontWeight:'700'}}>End: </Text>
+     <Text>{moment(item.endDate).format('DD/MM/yy')}</Text>
     </View>
  </View>}
  {item.item_count===2 &&
@@ -118,10 +128,10 @@ style={styles.flatliststyle}>
  marginLeft:15,color:'#383838'}}>Girlfriend</Text></View>
  <View style={{flexDirection:'row',width:'70%'}}>
       
-      <Text>Start Date: </Text>
-      <Text>{moment(item.lastDate).format('DD/MM')}</Text>
-      <Text style={{marginLeft:10}}>End Date: </Text>
-     <Text>{moment(item.endDate).format('DD/MM')}</Text>
+      <Text style={{fontWeight:'700'}}>Start: </Text>
+      <Text>{moment(item.lastDate).format('DD/MM/yy')}</Text>
+      <Text style={{marginLeft:10,fontWeight:'700'}}>End: </Text>
+     <Text>{moment(item.endDate).format('DD/MM/yy')}</Text>
     </View>
  </View>
  }
@@ -132,13 +142,13 @@ style={styles.flatliststyle}>
       <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,
       marginLeft:15,color:'#383838'}}>Daughter</Text>
       </View>
-     <View style={{flexDirection:'row',width:'70%'}}>
+      <View style={{flexDirection:'row',width:'70%'}}>
       
-       <Text>Start Date: </Text>
-       <Text>{moment(item.lastDate).format('DD/MM')}</Text>
-       <Text style={{marginLeft:10}}>End Date: </Text>
-      <Text>{moment(item.endDate).format('DD/MM')}</Text>
-     </View>
+      <Text style={{fontWeight:'700'}}>Start: </Text>
+      <Text>{moment(item.lastDate).format('DD/MM/yy')}</Text>
+      <Text style={{marginLeft:10,fontWeight:'700'}}>End: </Text>
+     <Text>{moment(item.endDate).format('DD/MM/yy')}</Text>
+    </View>
     
  </View>
  }
@@ -148,12 +158,12 @@ style={styles.flatliststyle}>
      <View style={{width:'30%',}}>
  <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,
  marginLeft:15,color:'#383838'}}>Family</Text></View>
- <View style={{flexDirection:'row',width:'70%'}}>
+  <View style={{flexDirection:'row',width:'70%'}}>
       
-      <Text>Start Date: </Text>
-      <Text>{moment(item.lastDate).format('DD/MM')}</Text>
-      <Text style={{marginLeft:10}}>End Date: </Text>
-     <Text>{moment(item.endDate).format('DD/MM')}</Text>
+      <Text style={{fontWeight:'700'}}>Start: </Text>
+      <Text>{moment(item.lastDate).format('DD/MM/yy')}</Text>
+      <Text style={{marginLeft:10,fontWeight:'700'}}>End: </Text>
+     <Text>{moment(item.endDate).format('DD/MM/yy')}</Text>
     </View>
  </View>}
  {item.item_count===5 &&
@@ -162,12 +172,12 @@ style={styles.flatliststyle}>
      <View style={{width:'30%',}}>
  <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,
  marginLeft:15,color:'#383838'}}>Friend</Text></View>
- <View style={{flexDirection:'row',width:'70%'}}>
+  <View style={{flexDirection:'row',width:'70%'}}>
       
-      <Text>Start Date: </Text>
-      <Text>{moment(item.lastDate).format('DD/MM')}</Text>
-      <Text style={{marginLeft:10}}>End Date: </Text>
-     <Text>{moment(item.endDate).format('DD/MM')}</Text>
+      <Text style={{fontWeight:'700'}}>Start: </Text>
+      <Text>{moment(item.lastDate).format('DD/MM/yy')}</Text>
+      <Text style={{marginLeft:10,fontWeight:'700'}}>End: </Text>
+     <Text>{moment(item.endDate).format('DD/MM/yy')}</Text>
     </View>
  </View>}
  {item.item_count===6 &&
@@ -176,11 +186,12 @@ style={styles.flatliststyle}>
      <View style={{width:'30%',}}>
  <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,
  marginLeft:15,color:'#383838'}}>Other</Text></View>
-<View style={{flexDirection:'row',width:'70%',}}>
-      <Text>Start Date: </Text>
-      <Text>{moment(item.lastDate).format('DD/MM')}</Text>
-      <Text style={{marginLeft:10}}>End Date: </Text>
-     <Text>{moment(item.endDate).format('DD/MM')}</Text>
+ <View style={{flexDirection:'row',width:'70%'}}>
+      
+      <Text style={{fontWeight:'700'}}>Start: </Text>
+      <Text>{moment(item.lastDate).format('DD/MM/yy')}</Text>
+      <Text style={{marginLeft:10,fontWeight:'700'}}>End: </Text>
+     <Text>{moment(item.endDate).format('DD/MM/yy')}</Text>
     </View>
  </View>}
 </TouchableOpacity>
@@ -266,7 +277,8 @@ style={styles.flatliststyle}>
         onRequestClose={() => {
           setmodalVisible(!modalVisible);
         }}>
-          <View style={{height: '100%',backgroundColor: 'rgba(64, 77, 97, 0.5)',}}>
+       
+          <TouchableOpacity activeOpacity={0.8}  onPress={() => setmodalVisible(!modalVisible)} style={{height: '100%',backgroundColor: 'rgba(64, 77, 97, 0.5)',}}>
             <Text   style={{marginTop:20}}></Text>
           <View style={{flex:0.3,backgroundColor:'white',width:'50%',alignSelf:'center',top:20,borderRadius:5}}>
           <FlatList
@@ -276,7 +288,7 @@ style={styles.flatliststyle}>
           renderItem={trakeelist}
           />
           </View>
-          </View>
+          </TouchableOpacity>
         </Modal>
         <Modal
         animationType="slide"
@@ -348,8 +360,9 @@ style={styles.flatliststyle}>
           </View>
         </View>
       </Modal>
-        <View style={{marginTop:15}}>
-       
+        <View style={{marginTop:20,width:'90%',alignSelf:'center'}}>
+       <Text style={{fontWeight:'700',fontFamily:Fonts.Poppins,fontSize:17,color:theme.colors.primary}}>{`Hi ${Name},`}</Text>
+       <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,color:'#383838'}}>Here is your trackee’s cycle</Text>
         </View>
         <View style={{flex:0.9}}>
         <FlatList

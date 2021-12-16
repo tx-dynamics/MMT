@@ -8,7 +8,7 @@ import { Fonts } from '../../../../utils/Fonts';
 import {Header} from 'react-native-elements';
 import HeaderCenterComponent from '../../../../components/HeaderCenterComponent';
 import theme from '../../../../theme';
-import {ellipse,notes,play,line,triangle,circle,cc} from '../../../../assets';
+import {ellipse,notes,play,line,triangle,circle,db} from '../../../../assets';
 import HeaderLeftComponent from '../../../../components/HeaderLeftComponent';
 import {Picker} from '@react-native-picker/picker';
 import { Calendar } from 'react-native-calendars';
@@ -40,12 +40,14 @@ async function getTrakee(){
       arr.push({
         id: dat?.items_count,
         uid:item.key,
-        name:dat?.items_count==1? 'Wife':dat?.items_count==2?
+        relationship:dat?.items_count==1? 'Wife':dat?.items_count==2?
         'Girlfriend':dat?.items_count==3?'Daughter':dat?.items_count==4?'Family':dat?.items_count==5?'Friend':'Other',
-        cycle:dat.cycle
+        cycle:dat.cycle,name:dat?.Name,
+        dp:dat?.dp
       })
     })
     setRelationship(arr);
+    console.log(arr);
     if(arr.length>0){
       setuid(arr[0]?.uid);
       selectDayes(arr[0]?.uid);
