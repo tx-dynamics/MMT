@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
-  Image,FlatList,TouchableOpacity, Touchable
+  Image,FlatList,TouchableOpacity,Modal, Dimensions
 } from 'react-native';
 import { Fonts } from '../../../../utils/Fonts';
 import {Header} from 'react-native-elements';
@@ -13,18 +13,19 @@ import HeaderLeftComponent from '../../../../components/HeaderLeftComponent';
 import {Picker} from '@react-native-picker/picker';
 import { Calendar } from 'react-native-calendars';
 import AntDesign from 'react-native-vector-icons/AntDesign'
+import styles from '../../HomeTab/Home/styles';
 //firebase
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import {useIsFocused} from '@react-navigation/native';
 const Calendars = props => {
-const[Relationship,setRelationship]=useState([
-]);
+const[Relationship,setRelationship]=useState([]);
 const isFocused = useIsFocused();
 const[items_count,setitems_count]=useState('');
 const[uid,setuid]=useState('');
 const [cal,setcal]=useState([]);
 const[cycle,setcycle]=useState('');
+const [modalVisible, setmodalVisible] = useState(false);
 useEffect(()=>{
   setRelationship([]);
   setuid('');
@@ -35,14 +36,15 @@ async function getTrakee(){
   const data =database().ref('trakees/'+auth().currentUser.uid+'/');
   let arr=[];
   data.on('value',childern=>{
-    childern.forEach(item=>{
+    childern.forEach((item,index)=>{
       const dat=item?.val();
       arr.push({
-        id: dat?.items_count,
+        id:item.key,
         uid:item.key,
         relationship:dat?.items_count==1? 'Wife':dat?.items_count==2?
         'Girlfriend':dat?.items_count==3?'Daughter':dat?.items_count==4?'Family':dat?.items_count==5?'Friend':'Other',
-        cycle:dat.cycle,name:dat?.Name,
+        cycle:dat.cycle,
+        name:dat?.Name,
         dp:dat?.dp
       })
     })
@@ -79,12 +81,13 @@ const renderArrow = (direction) => {
   }
 }
 function seletedval(value){
-  setitems_count(value);
+  console.log(value);
   Relationship.map(items=>{
-    if(items.id===value){
-      console.log(items.name);
+    if(items.uid===value){
+      console.log('name',items.name);
       setuid(items?.uid);
       selectDayes(items?.uid);
+      setitems_count(items.id);
     }
   })
 }
@@ -104,6 +107,20 @@ if(add){
   props.navigation.navigate('Note',{uid:ids,day:dates});
 }
 }
+const trakeelist=(({item, index})=>(
+  <TouchableOpacity
+  onPress={()=>(
+    setmodalVisible(false),seletedval(item.uid),setcycle(Relationship[index]?.cycle)
+   )}
+  style={styles.Trakeeliststyle}>
+    <View style={{flexDirection:'row',alignItems:'center',width:'90%',paddingHorizontal:5,}}>
+    <Image source={item.dp?{uri:item.dp}:db} style={{height:33,width:33,borderRadius:16}}/>
+   <Text numberOfLines={1} style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,marginLeft:15,
+   color:'#383838'}}>{item.name}
+   </Text>
+   </View>
+  </TouchableOpacity>
+    ));
   return (
   <View style={{flex: 1, backgroundColor: 'white'}}>
     <Header
@@ -113,20 +130,22 @@ if(add){
         leftComponent={<HeaderLeftComponent navigation={props.navigation} />}
         />
          <View style={{flex:0.04}}></View>
-         <View  style={{borderWidth:1,width:'90%',alignSelf:'center',
+         <TouchableOpacity onPress={() => setmodalVisible(!modalVisible)}  style={{borderWidth:1,width:'90%',alignSelf:'center',
          borderColor:'#C62252', borderRadius: 10,padding:6}}>
          <Picker
          selectedValue={items_count}
-            placeholder="Selecte No of Stores"
-            style={{
+         placeholder="Selecte No of Stores"
+        style={{
               fontSize: 12,
-              fontWeight: '600',paddingVertical: 10,
+              fontWeight: '600',
+              paddingVertical: 10,
               borderWidth: 10,
               width: '100%',
               borderRadius: 10,
               backgroundColor:'white',
               color: 'black',alignSelf:'center',
             }}
+            enabled={false}
             mode='dropdown'
             itemStyle={{
               height: 40,
@@ -161,7 +180,28 @@ if(add){
                 }
               })}
           </Picker>
+          </TouchableOpacity>
+        <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setmodalVisible(!modalVisible);
+        }}>
+       
+          <TouchableOpacity activeOpacity={0.8}  onPress={() => setmodalVisible(!modalVisible)} 
+          style={{height: '100%',backgroundColor: 'rgba(64, 77, 97, 0.5)',}}>
+            <Text   style={{marginTop:20}}></Text>
+          <View style={{flex:0.3,backgroundColor:'white',width:'70%',alignSelf:'center',top:Dimensions.get('window').height/8.8,borderRadius:5,left:20}}>
+          <FlatList
+          style={{marginTop:10,width:'90%',alignSelf:'center',}}
+          showsVerticalScrollIndicator={false}
+          data={Relationship}
+          renderItem={trakeelist}
+          />
           </View>
+          </TouchableOpacity>
+        </Modal>
           <View style={{borderBottomWidth:0.4,borderColor:'#DBD8D8',marginTop:10}}>
             <Calendar
             renderArrow={renderArrow}

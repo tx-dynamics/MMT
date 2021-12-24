@@ -86,7 +86,7 @@ marginTop:10,flexDirection:'row',alignItems:'center',justifyContent:'space-betwe
 justifyContent:'center',alignItems:'center'}}>
 <Image source={editProfile} style={{height:28,width:26.15,marginLeft:10,tintColor:'#E74779'}} />
 </View>
-<Text style={{color:'white',fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:20,left:15}}>Settings</Text>
+<Text style={{color:'white',fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:20,left:15}}>Password</Text>
 </View>
 <AntDesign name='right' size={13} color='white'/>
 </TouchableOpacity>

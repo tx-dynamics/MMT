@@ -17,9 +17,9 @@ import PushNotification from "react-native-push-notification";
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import moment from 'moment';
+import { set } from 'react-native-reanimated';
 const Home = props => {
-  const[trakeeList,settrakeeList]=useState([
-]);
+  const[trakeeList,settrakeeList]=useState([]);
   const navigation=props.navigation;
   const isFocused = useIsFocused();
   const[length,setlength]=useState(1);
@@ -28,10 +28,13 @@ const Home = props => {
   const[itemes,setitemes]=useState();
   const[Name,setName]=useState();
   const[loading,setloading]=useState(false);
+  const[trakeeloader,settrakeeloader]=useState(false);
   useEffect(()=>{
     settrakeeList([]);
+    settrakeeloader(true);
     getTrakee();
-    handleNotification();
+    settrakeeloader(false);
+    // handleNotification();
   
   },[isFocused]);
   const handleNotification = () => {
@@ -45,6 +48,8 @@ const Home = props => {
     //     color: "red",
     //     id: index
     // });
+    
+    settrakeeloader(false);
     const ndate=new Date().toJSON();
     trakeeList.map(items=>{
       console.log( moment(items.lastDate));
@@ -80,8 +85,8 @@ const Home = props => {
         setName(userdata.val().fName + " " + userdata.val().lName);
       }
     });
-    let arr=[];
-    data.on('value',childern=>{
+    var arr=[];
+   data.on('value',childern=>{
       childern.forEach(item=>{
         const dat=item?.val();
         arr.push({
@@ -96,104 +101,35 @@ const Home = props => {
           ismute:dat?.ismute?true: false
         })
       })
+      console.log('data length===>',arr.length);
       settrakeeList(arr);
-      setlength(arr?.length)
-      console.log('data===>',arr);
+      setlength(arr?.length);
     });
+    setTimeout(() => {
+     
+      settrakeeloader(false);
+    }, 1000);
+   
     // handleNotification();
   }
 const ontrakeeShow=(({item, index})=>(
 <TouchableOpacity
 onPress={()=>{setitemes(item),setonPeriod(!onPeriod)}}
 style={styles.flatliststyle}>
-{item.item_count===1 &&
 <View style={{flexDirection:'row',backgroundColor:'#FFF2F6',borderRadius:11,
   alignItems:'center',width:'100%',justifyContent:'space-between',paddingVertical:13}}>
      <View style={{width:'30%',}}>
  <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,
- marginLeft:15,color:'#383838'}}>Wife</Text></View>
+ marginLeft:15,color:'#383838'}}>{item.name}</Text></View>
  <View style={{flexDirection:'row',width:'70%'}}>
       
-      <Text style={{fontWeight:'700'}}>Start: </Text>
-      <Text>{moment(item.lastDate).format('DD/MM/yy')}</Text>
-      <Text style={{marginLeft:10,fontWeight:'700'}}>End: </Text>
-     <Text>{moment(item.endDate).format('DD/MM/yy')}</Text>
-    </View>
- </View>}
- {item.item_count===2 &&
-<View style={{flexDirection:'row',backgroundColor:'#FFF2F6',borderRadius:11,
-  alignItems:'center',width:'100%',justifyContent:'space-between',paddingVertical:13}}>
-     <View style={{width:'30%',}}>
- <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,
- marginLeft:15,color:'#383838'}}>Girlfriend</Text></View>
- <View style={{flexDirection:'row',width:'70%'}}>
-      
-      <Text style={{fontWeight:'700'}}>Start: </Text>
-      <Text>{moment(item.lastDate).format('DD/MM/yy')}</Text>
-      <Text style={{marginLeft:10,fontWeight:'700'}}>End: </Text>
-     <Text>{moment(item.endDate).format('DD/MM/yy')}</Text>
+      <Text style={{fontWeight:'700',color:'black'}}>Start: </Text>
+      <Text style={{fontWeight:'400',color:'#383838'}}>{moment(item.lastDate).format('DD/MM/yy')}</Text>
+      <Text style={{marginLeft:10,fontWeight:'700',color:'black'}}>End: </Text>
+     <Text style={{fontWeight:'400',color:'#383838'}}>{moment(item.endDate).format('DD/MM/yy')}</Text>
     </View>
  </View>
- }
- {item.item_count===3 &&
-      <View style={{flexDirection:'row',backgroundColor:'#FFF2F6',borderRadius:11,justifyContent:'space-between',
-        alignItems:'center',width:'100%',paddingVertical:13}}>
-      <View style={{width:'30%',}}>
-      <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,
-      marginLeft:15,color:'#383838'}}>Daughter</Text>
-      </View>
-      <View style={{flexDirection:'row',width:'70%'}}>
-      
-      <Text style={{fontWeight:'700'}}>Start: </Text>
-      <Text>{moment(item.lastDate).format('DD/MM/yy')}</Text>
-      <Text style={{marginLeft:10,fontWeight:'700'}}>End: </Text>
-     <Text>{moment(item.endDate).format('DD/MM/yy')}</Text>
-    </View>
-    
- </View>
- }
- {item.item_count===4 &&
-<View style={{flexDirection:'row',backgroundColor:'#FFF2F6',borderRadius:11,
-  alignItems:'center',width:'100%',justifyContent:'space-between',paddingVertical:13}}>
-     <View style={{width:'30%',}}>
- <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,
- marginLeft:15,color:'#383838'}}>Family</Text></View>
-  <View style={{flexDirection:'row',width:'70%'}}>
-      
-      <Text style={{fontWeight:'700'}}>Start: </Text>
-      <Text>{moment(item.lastDate).format('DD/MM/yy')}</Text>
-      <Text style={{marginLeft:10,fontWeight:'700'}}>End: </Text>
-     <Text>{moment(item.endDate).format('DD/MM/yy')}</Text>
-    </View>
- </View>}
- {item.item_count===5 &&
-<View style={{flexDirection:'row',backgroundColor:'#FFF2F6',borderRadius:11,
-  alignItems:'center',width:'100%',justifyContent:'space-between',paddingVertical:13}}>
-     <View style={{width:'30%',}}>
- <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,
- marginLeft:15,color:'#383838'}}>Friend</Text></View>
-  <View style={{flexDirection:'row',width:'70%'}}>
-      
-      <Text style={{fontWeight:'700'}}>Start: </Text>
-      <Text>{moment(item.lastDate).format('DD/MM/yy')}</Text>
-      <Text style={{marginLeft:10,fontWeight:'700'}}>End: </Text>
-     <Text>{moment(item.endDate).format('DD/MM/yy')}</Text>
-    </View>
- </View>}
- {item.item_count===6 &&
-<View style={{flexDirection:'row',backgroundColor:'#FFF2F6',borderRadius:11,
-  alignItems:'center',width:'100%',justifyContent:'space-between',paddingVertical:13}}>
-     <View style={{width:'30%',}}>
- <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,
- marginLeft:15,color:'#383838'}}>Other</Text></View>
- <View style={{flexDirection:'row',width:'70%'}}>
-      
-      <Text style={{fontWeight:'700'}}>Start: </Text>
-      <Text>{moment(item.lastDate).format('DD/MM/yy')}</Text>
-      <Text style={{marginLeft:10,fontWeight:'700'}}>End: </Text>
-     <Text>{moment(item.endDate).format('DD/MM/yy')}</Text>
-    </View>
- </View>}
+ 
 </TouchableOpacity>
   ))
   const trakeelist=(({item, index})=>(
@@ -226,15 +162,15 @@ style={styles.flatliststyle}>
       lastDate:date
     }
     data.update(dat);
-    settrakeeList([]);
     setloading(false);
     setonPeriod(!onPeriod);
+    
+    settrakeeloader(false);
     getTrakee();
-
   }
-  function upTrakee(){
+ async function upTrakee(){
     const uid = auth()?.currentUser?.uid;
-    console.log(itemes);
+    console.log( itemes);
     // return
     const data =database().ref('trakees/'+auth().currentUser.uid+'/'+itemes?.id+'/');
     const dat={
@@ -244,7 +180,7 @@ style={styles.flatliststyle}>
       item_count: itemes?.items_count,
       ismute:!itemes?.ismute
     }
-    data.update(dat);
+  data.update(dat);
     setonPeriod(!onPeriod);
     settrakeeList([]);
     getTrakee();
@@ -323,11 +259,11 @@ style={styles.flatliststyle}>
         </TouchableOpacity>
       <View style={{backgroundColor:'white',height:'80.5%',width:'98%',borderRadius:30}}>
         <View style={{marginTop:10,alignSelf:'center'}}>
-        <Text numberOfLines={1} style={{fontSize:18,fontWeight:'bold'}}>{`Is Your Trakee ${itemes?.name} Period Stars?`}</Text>
+        <Text numberOfLines={1} style={{fontSize:18,fontWeight:'bold',color:'black'}}>{`Is Your Trakee ${itemes?.name} Period Stars?`}</Text>
         </View>
         <View style={{width:'90%',flexDirection:'row',alignSelf:'center',justifyContent:'space-between',marginTop:20}}>
         <TouchableOpacity
-        onPress={()=>{upTrakee(),
+        onPress={()=>{upTrakee(),settrakeeloader(true),
           settrakeeList([])}}
         style={{marginTop:10,
         alignSelf:'center',width:'40%',
@@ -337,7 +273,7 @@ style={styles.flatliststyle}>
         <Text style={{fontSize:18,fontWeight:'bold',textAlign:'center',color:'white'}}>Yes</Text>
         </TouchableOpacity>
         <TouchableOpacity
-        onPress={()=>{updateTrakee(),settrakeeList([])}}
+        onPress={()=>{updateTrakee(),settrakeeList([]),settrakeeloader(true)}}
         style={{marginTop:10,
         alignSelf:'center',width:'40%',
         backgroundColor:theme.colors.primary,
@@ -361,16 +297,26 @@ style={styles.flatliststyle}>
         </View>
       </Modal>
         <View style={{marginTop:20,width:'90%',alignSelf:'center'}}>
-       <Text style={{fontWeight:'700',fontFamily:Fonts.Poppins,fontSize:17,color:theme.colors.primary}}>{`Hi ${Name},`}</Text>
+       <Text style={{fontWeight:'700',fontFamily:Fonts.Poppins,fontSize:17,color:theme.colors.primary}}>{`Hi ${Name?Name:'Loading..'},`}</Text>
        <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,color:'#383838'}}>Here is your trackee’s cycle</Text>
         </View>
         <View style={{flex:0.9}}>
-        <FlatList
+
+     {trakeeloader ?
+     <ActivityIndicator
+                  animating
+                  size={50}
+                  color={theme.colors.primary}
+                  style={{
+                    color:theme.colors.primary,position:'absolute',
+                    bottom:Dimensions.get('window').height/3,alignSelf:"center"
+                  }}
+                />:  <FlatList
           style={{marginTop:20,width:'90%',alignSelf:'center',}}
           showsVerticalScrollIndicator={false}
           data={trakeeList}
           renderItem={ontrakeeShow}
-          />
+          />}
           </View>
           <TouchableOpacity
           onPress={()=>navigation.navigate('Trakee',{screen:'TrakeeName'})}
