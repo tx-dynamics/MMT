@@ -18,6 +18,7 @@ import styles from '../../HomeTab/Home/styles';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import {useIsFocused} from '@react-navigation/native';
+import moment from 'moment';
 const Calendars = props => {
 const[Relationship,setRelationship]=useState([]);
 const isFocused = useIsFocused();
@@ -26,6 +27,9 @@ const[uid,setuid]=useState('');
 const [cal,setcal]=useState([]);
 const[cycle,setcycle]=useState('');
 const [modalVisible, setmodalVisible] = useState(false);
+const[lastday,setlastday]=useState();
+const[startday,setstartday]=useState();
+const [markedDays, setmarkedDays] = useState([]);
 useEffect(()=>{
   setRelationship([]);
   setuid('');
@@ -36,7 +40,7 @@ async function getTrakee(){
   const data =database().ref('trakees/'+auth().currentUser.uid+'/');
   let arr=[];
   data.on('value',childern=>{
-    childern.forEach((item,index)=>{
+    childern.forEach((item)=>{
       const dat=item?.val();
       arr.push({
         id:item.key,
@@ -45,16 +49,32 @@ async function getTrakee(){
         'Girlfriend':dat?.items_count==3?'Daughter':dat?.items_count==4?'Family':dat?.items_count==5?'Friend':'Other',
         cycle:dat.cycle,
         name:dat?.Name,
-        dp:dat?.dp
+        dp:dat?.dp,
+        lastDate: new Date(dat?.lastDate).getMonth()<new Date().getMonth()? moment(dat?.lastDate).add(30,'days'):dat?.lastDate,
       })
     })
     setRelationship(arr);
-    console.log(arr);
+    // console.log('data====>',new Date( arr[0].lastDate).toDateString());
+    let markedDay = {};
     if(arr.length>0){
       setuid(arr[0]?.uid);
       selectDayes(arr[0]?.uid);
       setcycle(arr[0].cycle);
+      const sd=(moment(arr[0].lastDate).add(7,'day'));
+      // 2022-01-01
+      setstartday(moment(arr[0].lastDate).format('yyy-MM-DD'));
+      setlastday(moment(sd).format('yyy-MM-DD'));
+      console.log(moment(sd).format('yyy-MM-DD'));
+      
+      for(let i=1;i<8;i++) {
+      
+        let pDate= moment(arr[0].lastDate).add(i,'day');
+        markedDay[moment(pDate).format('YYYY-MM-DD')] = {selected: true, selectedColor: 'blue',}
+        
     }
+    }
+   console.log('markedDay',markedDay);
+   setmarkedDays(markedDay);
   });
 }
 async function selectDayes(id){
@@ -82,12 +102,21 @@ const renderArrow = (direction) => {
 }
 function seletedval(value){
   console.log(value);
+  let markedDay = {};
   Relationship.map(items=>{
     if(items.uid===value){
       console.log('name',items.name);
       setuid(items?.uid);
       selectDayes(items?.uid);
       setitems_count(items.id);
+      for(let i=1;i<8;i++) {
+      
+        let pDate= moment(items.lastDate).add(i,'day');
+        markedDay[moment(pDate).format('YYYY-MM-DD')] = {selected: true, selectedColor: 'blue',}
+        
+    }
+    console.log('markedDay',markedDay);
+    setmarkedDays(markedDay);
     }
   })
 }
@@ -110,7 +139,7 @@ if(add){
 const trakeelist=(({item, index})=>(
   <TouchableOpacity
   onPress={()=>(
-    setmodalVisible(false),seletedval(item.uid),setcycle(Relationship[index]?.cycle)
+    setmodalVisible(false),seletedval(item.uid),setcycle(Relationship[index]?.cycle),setlastday(Relationship[index]?.lastDate)
    )}
   style={styles.Trakeeliststyle}>
     <View style={{flexDirection:'row',alignItems:'center',width:'90%',paddingHorizontal:5,}}>
@@ -153,7 +182,7 @@ const trakeelist=(({item, index})=>(
             }}
             dropdownIconColor='black'
             onValueChange={(itemValue, itemIndex) =>
-             { seletedval(itemValue), setcycle(Relationship[itemValue]?.cycle);}
+             { seletedval(itemValue), setcycle(Relationship[itemValue]?.cycle)}
             }>
             {Relationship &&
              Relationship.map((item, index) => {
@@ -204,6 +233,9 @@ const trakeelist=(({item, index})=>(
         </Modal>
           <View style={{borderBottomWidth:0.4,borderColor:'#DBD8D8',marginTop:10}}>
             <Calendar
+            markingType='period'
+            marking={true}
+             markedDates={markedDays}
             renderArrow={renderArrow}
               theme={{
                 textMonthFontSize: 30,
@@ -218,30 +250,26 @@ const trakeelist=(({item, index})=>(
                 textMonthFontWeight: '400',
               }}
             style={[ {height:330}]}
-            dayComponent={({date, state}) => {
+            dayComponent={({date, state,marking }) => {
               return (
               <View style={{flexDirection:'row',alignItems:'center'}}>
-                {Number (cycle)=== date.day&&
-                   <Image source={play} resizeMode='contain' style={{height:10.37,width:10.91,}} />}
-                {cal.map( item=>
+                {Number (cycle)=== date?.day&&
+                   <Image source={play} resizeMode='contain' style={{height:10.37,width:10.91,tintColor:  state === 'disabled' ? 'transparent':theme.colors.primary}} />}
+                {cal?.map( item=>
                (date.dateString===item.id? 
                    <View style={{flexDirection:'row',alignItems:'center'}}>
                    <Image source={notes} resizeMode='contain' style={{height:10.37,width:10.91}} />
-                 {/* <Text style={{textAlign: 'center', color: state === 'disabled' ? 'white' : '#383838',
-                 fontFamily:Fonts.Poppins,fontSize:17,fontWeight:'400'}}>
-                   {date.day}
-                   </Text> */}
                    </View>:null
                    
                   ))
                   }
                    <TouchableOpacity
-                   disabled={Relationship.length>0?false:true}
-                  //  onPress={()=>props.navigation.navigate('Note',{uid,day:date.dateString})}
+                   disabled={Relationship?.length>0?false:true}
                   onPress={()=>navis(uid,date.dateString)}
                    >
-                  <Text style={{textAlign: 'center', color: state === 'disabled' ? 'white' : '#383838',
-                  fontFamily:Fonts.Poppins,fontSize:17,fontWeight:'400',marginRight:date.day===Number (cycle)?10:0
+                  <Text style={{textAlign: 'center', color: state === 'disabled' ? 'transparent':marking?'tomato': '#383838',
+                  fontFamily:Fonts.Poppins,fontSize:17,fontWeight:'400',
+                  marginRight:date?.day===Number (cycle)?10:0,
                   }}>
                     {date.day}
                   </Text>

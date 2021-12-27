@@ -34,7 +34,7 @@ const Home = props => {
     settrakeeloader(true);
     getTrakee();
     settrakeeloader(false);
-    // handleNotification();
+    handleNotification();
   
   },[isFocused]);
   const handleNotification = () => {
@@ -121,12 +121,12 @@ style={styles.flatliststyle}>
      <View style={{width:'30%',}}>
  <Text style={{fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:13,
  marginLeft:15,color:'#383838'}}>{item.name}</Text></View>
- <View style={{flexDirection:'row',width:'70%'}}>
+ <View style={{flexDirection:'row',width:'70%',alignItems:'center'}}>
       
       <Text style={{fontWeight:'700',color:'black'}}>Start: </Text>
-      <Text style={{fontWeight:'400',color:'#383838'}}>{moment(item.lastDate).format('DD/MM/yy')}</Text>
+      <Text style={{fontWeight:'400',color:'#898989',fontSize:12}}>{moment(item.lastDate).format('DD/MM/yy')}</Text>
       <Text style={{marginLeft:10,fontWeight:'700',color:'black'}}>End: </Text>
-     <Text style={{fontWeight:'400',color:'#383838'}}>{moment(item.endDate).format('DD/MM/yy')}</Text>
+     <Text style={{fontWeight:'400',color:'#898989',fontSize:12}}>{moment(item.endDate).format('DD/MM/yy')}</Text>
     </View>
  </View>
  
