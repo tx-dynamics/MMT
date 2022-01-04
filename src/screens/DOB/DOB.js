@@ -18,7 +18,7 @@ import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import moment from 'moment';
 const DOB = props => {
-const [date, setDate] = useState(new Date());
+const [date, setDate] = useState(new Date(moment().subtract(32, "years")));
 const[loading,setloading]=useState(false);
 async function onDob(){
  console.log(date.toJSON());
@@ -83,7 +83,8 @@ await up.update(data).then
         textColor='white'
         fadeToColor='white'
         androidVariant='nativeAndroid'
-        maximumDate={moment().subtract(10, "years").toDate()}
+        minimumDate={moment().subtract(32, "years")}
+        // maximumDate={moment().subtract(10, "years").toDate()}
         date={date} 
         style={{alignSelf:'center',}}
         onDateChange={txt=>{setDate(txt),console.log(txt)}}/>

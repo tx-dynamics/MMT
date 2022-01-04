@@ -205,12 +205,12 @@ const SignupScreen = props => {
               ) : (
   <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Next</Text>)}
 </TouchableOpacity>
-<TouchableOpacity
- onPress={()=>props.navigation.navigate('Signin')}
-style={{alignSelf:'center',marginTop:Dimensions.get('window').height/6}}>
-<Text style={{color:'white',fontWeight:'500',
-fontFamily:Fonts.Poppins,fontSize:15}}>Already have an account?</Text>
-    </TouchableOpacity>
+      <TouchableOpacity
+      onPress={()=>props.navigation.navigate('Signin')}
+      style={{alignSelf:'center',marginTop:Dimensions.get('window').height/6}}>
+      <Text style={{color:'white',fontWeight:'500',
+      fontFamily:Fonts.Poppins,fontSize:15}}>Already have an account?</Text>
+          </TouchableOpacity>
     </ScrollView>
   );
 };
