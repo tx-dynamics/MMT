@@ -21,18 +21,30 @@ const Setup = props => {
 
   return (
     <View style={{flex: 1, backgroundColor:theme.colors.p1}}>
-        <View style={{flex:0.5}}>
-      <LottieView
+        
+   
+        {/* <LottieView
         source={require('../../utils/confetti.json')}
         style={{
           backgroundColor:theme.colors.p1,
           alignSelf: 'center',
-        //   flex: 0.3,
+          flex: 1,
         }}
         autoPlay
         loop
-      /></View>
-      <View style={{width: '100%'}}>
+      /> */}
+      <View style={{width: '100%',marginTop:Dimensions.get('window').height/3}}>
+      <Text
+          style={[
+            {
+              width: '90%',
+              alignSelf: 'center',
+              textAlign: 'center',
+              color: 'yellow',fontSize:20,fontFamily:Fonts.Poppins,fontWeight:'500'
+            },
+          ]}>
+         Congratulations
+        </Text>
         <Text
           style={[
             {

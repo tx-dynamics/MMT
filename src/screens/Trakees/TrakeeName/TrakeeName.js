@@ -79,7 +79,7 @@ console.log('post key===\n', newPostKey);
             style={{width:'70%',width:'70%',color:'#FFB5CC',fontWeight:'300',fontSize:15,fontFamily:Fonts.Poppins}}
               onChangeText={text => setName(text)}
               value={Name}
-              placeholder='Trackee name'
+              // placeholder='Trackee name'
               placeholderTextColor={theme.colors.s2}
               underlineColorAndroid="transparent"
               keyboardType='email-address'

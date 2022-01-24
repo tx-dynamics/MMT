@@ -23,7 +23,7 @@ const Setting = props => {
         centerComponent={<HeaderCenterComponent name='Password'/>}
         leftComponent={<HeaderLeftComponent navigation={props.navigation} />}
         />
-        <TouchableOpacity
+<TouchableOpacity
         onPress={()=>props.navigation.navigate('Password')}
         style={{paddingVertical:10,width:'85%',alignSelf:'center',marginTop:30,flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
 <Text style={{color:'white',fontWeight:'400',fontFamily:Fonts.Poppins,fontSize:20}}>Password</Text>

@@ -140,7 +140,7 @@ const SignupScreen = props => {
               value={fName}
               placeholderTextColor={theme.colors.s2}
               underlineColorAndroid="transparent"
-              maxLength={5}
+              maxLength={10}
             />
                <TextInput
             style={styles.smallInput}
@@ -160,7 +160,7 @@ const SignupScreen = props => {
               value={userName}
               placeholderTextColor={theme.colors.s2}
               underlineColorAndroid="transparent"
-              maxLength={10}
+              maxLength={20}
             />
           </View>
           <View  style={{marginTop:10}}>

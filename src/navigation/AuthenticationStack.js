@@ -4,6 +4,7 @@ import SignupScreen from '../screens/SignupScreen';
 import Signin from '../screens/Signin';
 import Splash from '../screens/Splash';
 import Info from '../screens/Info/Info';
+import ForgetPass from '../screens/ForgetPass';
 const Stack = createStackNavigator();
 
 const AuthenticationStack = () => {
@@ -18,6 +19,7 @@ const AuthenticationStack = () => {
       <Stack.Screen component={Info} name="info" />
        <Stack.Screen component={Signin} name="Signin" /> 
       <Stack.Screen component={SignupScreen} name="Signup" />
+      <Stack.Screen component={ForgetPass} name="Forget" />
     </Stack.Navigator>
   );
 };
