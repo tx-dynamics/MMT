@@ -46,15 +46,15 @@ async function login() {
       .catch(err =>{
         setloading(false);
         Snackbar.show({
-          text: err.message,
-          backgroundColor: 'black',
+          text: err.message.replace('[auth/invalid-email]',''),
+          backgroundColor: 'red',
         });
       });
   } else {
     setloading(false);
     Snackbar.show({
       text: 'Kindly Fill all the fields',
-      backgroundColor: 'black',
+      backgroundColor: 'red',
     });
   }
 };

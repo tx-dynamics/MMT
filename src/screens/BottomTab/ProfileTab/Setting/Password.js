@@ -53,7 +53,7 @@ const Password = props => {
                 setLoading(false);
                 Snackbar.show({
                    text: error.message,
-                   backgroundColor: 'black',
+                   backgroundColor: 'red',
                  });
             });
         })
@@ -62,7 +62,7 @@ const Password = props => {
           setLoading(false);
           Snackbar.show({
              text: error.message.replace('[auth/too-many-requests]',''),
-             backgroundColor: 'black',
+             backgroundColor: 'red',
            });
         });
 
@@ -71,7 +71,7 @@ const Password = props => {
         setLoading(false);
         Snackbar.show({
            text: 'Both passwords must be match',
-           backgroundColor: 'black',
+           backgroundColor: 'red',
          });
       },1000)
     }
@@ -81,7 +81,7 @@ const Password = props => {
         setLoading(false);
         Snackbar.show({
            text: 'Kindly fill all the fields',
-           backgroundColor: 'black',
+           backgroundColor: 'red',
          });
       },1000)
     }

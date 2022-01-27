@@ -68,7 +68,7 @@ const SignupScreen = props => {
                         console.log(res);
                         Snackbar.show({
                           text: res.message,
-                          backgroundColor: 'black',
+                          backgroundColor: 'red',
                         });
                       });
                   });
@@ -81,7 +81,7 @@ const SignupScreen = props => {
          console.log(errorMessage.replace('[auth/email-already-in-use]',''));
          Snackbar.show({
           text: errorMessage.replace('[auth/email-already-in-use]',''),
-          backgroundColor: 'black',
+          backgroundColor: 'red',
         });
         });
     } else {
@@ -89,7 +89,7 @@ const SignupScreen = props => {
         setLoading(false);
         Snackbar.show({
           text: 'Kindly Fill all the fields',
-          backgroundColor: 'black',
+          backgroundColor: 'red',
         });
       }, 300);
     
@@ -99,7 +99,7 @@ const SignupScreen = props => {
       setLoading(false);
       Snackbar.show({
         text: 'Kindly Enter Correct Last Name',
-        backgroundColor: 'black',
+        backgroundColor: 'red',
       });
     }, 300);
   
@@ -110,7 +110,7 @@ const SignupScreen = props => {
       setLoading(false);
     Snackbar.show({
       text: 'Kindly Enter Correct First Name',
-      backgroundColor: 'black',
+      backgroundColor: 'red',
     });
     },300)
     

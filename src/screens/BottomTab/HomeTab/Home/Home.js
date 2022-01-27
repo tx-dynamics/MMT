@@ -54,7 +54,8 @@ const Home = props => {
     trakeeList.map(items=>{
       console.log( moment(items.lastDate));
       console.log(new Date(Date.now()));
-      if(  moment(items.lastDate).format('yy/MM/DD')=== new Date(Date.now()) ){
+      if(  moment(items.lastDate).format('yy/MM/DD')=== new Date(Date.now()))
+      {
         console.log( 'hwew',items.lastDate);
         PushNotification.localNotificationSchedule({
           channelId: "mmt",
@@ -311,8 +312,9 @@ style={styles.flatliststyle}>
                     color:theme.colors.primary,position:'absolute',
                     bottom:Dimensions.get('window').height/3,alignSelf:"center"
                   }}
-                />:  <FlatList
-          style={{marginTop:20,width:'90%',alignSelf:'center',}}
+                />:
+          <FlatList
+          style={{marginTop:20,width:'90%',alignSelf:'center',marginBottom:10,flex:1}}
           showsVerticalScrollIndicator={false}
           data={trakeeList}
           renderItem={ontrakeeShow}

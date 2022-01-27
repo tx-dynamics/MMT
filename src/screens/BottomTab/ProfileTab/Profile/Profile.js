@@ -66,13 +66,14 @@ const Profile = props => {
           setmodalVisible(!modalVisible);
         }}>
        
-          <TouchableOpacity activeOpacity={0.8}  onPress={() => setmodalVisible(!modalVisible)} 
-          style={{height: '100%',justifyContent:'center'}}>
+          {/* <TouchableOpacity activeOpacity={0.8}  onPress={() => setmodalVisible(!modalVisible)} 
+          style={{height: '100%',justifyContent:'center'}}> */}
+          <View  style={{height: '100%',justifyContent:'center'}}>
           <View style={{flex:0.2,backgroundColor:'#FFB6D1',width:'80%',alignSelf:'center',
           borderRadius:5,elevation:10,justifyContent:'space-around'}}>
          <Text style={{color:'#C62252',fontSize:17,fontFamily:Fonts.Poppins,textAlign:"center",marginTop:5,
         }}>Are you sure you want to logout?</Text>
-        <View style={{flexDirection:'row',width:'95%',justifyContent:'space-between',alignSelf:'center',}}>
+        <View style={{flexDirection:'row',width:'75%',justifyContent:'space-between',alignSelf:'center',}}>
           <TouchableOpacity
           onPress={()=>{onlogout(),setloading(true)}}
           style={{width:'35%',backgroundColor:'#C62252',paddingVertical:10,borderRadius:10}}>
@@ -85,7 +86,8 @@ const Profile = props => {
           </TouchableOpacity>
         </View>
           </View>
-          </TouchableOpacity>
+          </View>
+          {/* </TouchableOpacity> */}
         </Modal>
     <View style={{flex:0.4,}}>
       

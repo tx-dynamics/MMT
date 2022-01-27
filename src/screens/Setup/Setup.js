@@ -23,7 +23,7 @@ const Setup = props => {
     <View style={{flex: 1, backgroundColor:theme.colors.p1}}>
         
    
-        {/* <LottieView
+        <LottieView
         source={require('../../utils/confetti.json')}
         style={{
           backgroundColor:theme.colors.p1,
@@ -32,7 +32,7 @@ const Setup = props => {
         }}
         autoPlay
         loop
-      /> */}
+      />
       <View style={{width: '100%',marginTop:Dimensions.get('window').height/3}}>
       <Text
           style={[

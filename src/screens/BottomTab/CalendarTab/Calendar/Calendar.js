@@ -29,6 +29,7 @@ const[cycle,setcycle]=useState('');
 const [modalVisible, setmodalVisible] = useState(false);
 const[lastday,setlastday]=useState();
 const[startday,setstartday]=useState();
+const[fert,setfert]=useState();
 const [markedDays, setmarkedDays] = useState([]);
 useEffect(()=>{
   setRelationship([]);
@@ -50,7 +51,29 @@ async function getTrakee(){
         cycle:dat.cycle,
         name:dat?.Name,
         dp:dat?.dp,
-        lastDate: new Date(dat?.lastDate).getMonth()<new Date().getMonth()? moment(dat?.lastDate).add(30,'days'):dat?.lastDate,
+        lastDate: new Date(dat?.lastDate).getFullYear()<new Date().getFullYear()?
+        moment(dat?.lastDate).add({month: new Date().getMonth()-new Date(dat?.lastDate).getMonth(),
+          year:  new Date().getFullYear()>
+          new Date(dat?.lastDate).getFullYear()?
+          new Date().getFullYear()-new Date(dat?.lastDate).getFullYear():
+          new Date().getFullYear()<new Date(dat?.lastDate).getFullYear()?
+          new Date(dat?.lastDate).getFullYear()-new Date().getFullYear():0
+        })
+        // .add(
+        //   new Date().getFullYear()>
+        // new Date(dat?.lastDate).getFullYear()?
+        // new Date().getFullYear()-new Date(dat?.lastDate).getFullYear():
+        // new Date().getFullYear()<new Date(dat?.lastDate).getFullYear()?
+        // new Date(dat?.lastDate).getFullYear()-new Date().getFullYear():0
+        // ,'year'):
+        :
+        new Date(dat?.lastDate).getFullYear()>new Date().getFullYear()?
+        moment(dat?.lastDate).add(new Date(dat?.lastDate).getMonth()-new Date().getMonth(),'month').add(new Date().getFullYear()>
+        new Date(dat?.lastDate).getFullYear()?
+        new Date().getFullYear()-new Date(dat?.lastDate).getFullYear():
+        new Date().getFullYear()<new Date(dat?.lastDate).getFullYear()?
+        new Date(dat?.lastDate).getFullYear()-new Date().getFullYear():0,'year'):
+        dat?.lastDate,
       })
     })
     setRelationship(arr);
@@ -61,10 +84,12 @@ async function getTrakee(){
       selectDayes(arr[0]?.uid);
       setcycle(arr[0].cycle);
       const sd=(moment(arr[0].lastDate).add(7,'day'));
+      const ft=(moment(arr[0].lastDate).add(13,'day'));
       // 2022-01-01
       setstartday(moment(arr[0].lastDate).format('yyy-MM-DD'));
       setlastday(moment(sd).format('yyy-MM-DD'));
-      console.log(moment(sd).format('yyy-MM-DD'));
+      setfert(moment(ft).format('yyy-MM-DD'))
+      console.log(typeof arr[0].cycle);
       
       for(let i=1;i<8;i++) {
       
@@ -110,10 +135,12 @@ function seletedval(value){
       selectDayes(items?.uid);
       setitems_count(items.id);
       for(let i=1;i<8;i++) {
-      
-        let pDate= moment(items.lastDate).add(i,'day');
-        markedDay[moment(pDate).format('YYYY-MM-DD')] = {selected: true, selectedColor: 'blue',}
         
+        let pDate= moment(items.lastDate).add(i,'day');
+        let chk= new Date().getMonth();
+        let phk= new Date().getFullYear();
+        markedDay[moment(pDate).format('YYYY-MM-DD')] = {selected: true, selectedColor: 'blue',}
+        // console.group('new',chk,phk);
     }
     console.log('markedDay',markedDay);
     setmarkedDays(markedDay);
@@ -182,7 +209,8 @@ const trakeelist=(({item, index})=>(
             }}
             dropdownIconColor='black'
             onValueChange={(itemValue, itemIndex) =>
-             { seletedval(itemValue), setcycle(Relationship[itemValue]?.cycle)}
+             { seletedval(itemValue), setcycle(Relationship[itemValue]?.cycle);
+            }
             }>
             {Relationship &&
              Relationship.map((item, index) => {
@@ -231,7 +259,7 @@ const trakeelist=(({item, index})=>(
           </View>
           </TouchableOpacity>
         </Modal>
-          <View style={{borderBottomWidth:0.4,borderColor:'#DBD8D8',marginTop:10}}>
+          <View style={{marginTop:10}}>
             <Calendar
             markingType='period'
             marking={true}
@@ -253,8 +281,6 @@ const trakeelist=(({item, index})=>(
             dayComponent={({date, state,marking }) => {
               return (
               <View style={{flexDirection:'row',alignItems:'center'}}>
-                {Number (cycle)=== date?.day&&
-                   <Image source={play} resizeMode='contain' style={{height:10.37,width:10.91,tintColor:  state === 'disabled' ? 'transparent':theme.colors.primary}} />}
                 {cal?.map( item=>
                (date.dateString===item.id? 
                    <View style={{flexDirection:'row',alignItems:'center'}}>
@@ -263,6 +289,17 @@ const trakeelist=(({item, index})=>(
                    
                   ))
                   }
+                 {date.dateString===lastday?
+                 <View style={{flexDirection:'row',alignItems:'center'}}>
+                   <Image source={ellipse} resizeMode='contain' style={{height:10.37,width:10.91}} />
+                   </View>:null}
+                   {date.dateString===fert?
+                 <View style={{flexDirection:'row',alignItems:'center'}}>
+                   <Image source={triangle} resizeMode='contain' style={{height:10.37,width:10.91}} />
+                   </View>:null}
+                   {Number (cycle)=== date?.day&&
+                   <Image source={play} resizeMode='contain' style={{height:10.37,width:10.91,
+                   tintColor:  state === 'disabled' ? 'transparent':theme.colors.primary}} />}
                    <TouchableOpacity
                    disabled={Relationship?.length>0?false:true}
                   onPress={()=>navis(uid,date.dateString)}
@@ -279,7 +316,8 @@ const trakeelist=(({item, index})=>(
 }}
 />
 </View>
-    <View style={{marginTop:25,flexDirection:'row',width:'90%',alignSelf:'center',justifyContent:"space-between"}}>
+<Text style={{borderTopWidth:0.4,borderColor:'#DBD8D8',marginTop:10}}></Text>
+    <View style={{flexDirection:'row',width:'90%',alignSelf:'center',justifyContent:"space-between",}}>
       <View style={{flexDirection:'row',alignItems:'center'}}>
       <Image source={circle} resizeMode='contain' style={{height:12,width:12}} />
       <Text style={{fontWeight:'400',fontSize:10,fontFamily:Fonts.Poppins,color:'black',marginLeft:5}}>Trackee 1</Text>
