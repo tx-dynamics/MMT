@@ -47,7 +47,7 @@ console.log('post key===\n', newPostKey);
       setloading(false);
       Snackbar.show({
         text: 'Kindly Enter Correct Name',
-        backgroundColor: 'red',
+        backgroundColor: theme.colors.s2,
       });
     }, 300);
   

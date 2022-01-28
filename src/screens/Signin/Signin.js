@@ -47,14 +47,14 @@ async function login() {
         setloading(false);
         Snackbar.show({
           text: err.message.replace('[auth/invalid-email]',''),
-          backgroundColor: 'red',
+          backgroundColor: theme.colors.s2,
         });
       });
   } else {
     setloading(false);
     Snackbar.show({
       text: 'Kindly Fill all the fields',
-      backgroundColor: 'red',
+      backgroundColor: theme.colors.s2,
     });
   }
 };
@@ -143,7 +143,7 @@ export function Errors({errors}) {
         width: '95%',
         alignSelf: 'center',
         marginTop: 5,
-        color: 'red',
+        color:  theme.colors.s2,
       }}>
       {errors}
     </Text>

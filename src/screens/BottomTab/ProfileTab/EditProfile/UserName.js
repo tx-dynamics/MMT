@@ -62,7 +62,7 @@ const UserName = props => {
         setLoading(false);
         Snackbar.show({
           text: 'Kindly Enter Correct Last Name',
-          backgroundColor: 'red',
+          backgroundColor: theme.colors.s2,
         });
       }, 300);
     
@@ -73,7 +73,7 @@ const UserName = props => {
         setLoading(false);
       Snackbar.show({
         text: 'Kindly Enter Correct First Name',
-        backgroundColor: 'red',
+        backgroundColor:  theme.colors.s2,
       });
       },300)}
 

@@ -101,7 +101,7 @@ export function Errors({errors}) {
         width: '95%',
         alignSelf: 'center',
         marginTop: 5,
-        color: 'red',
+        color: theme.colors.s2,
       }}>
       {errors}
     </Text>

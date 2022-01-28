@@ -36,7 +36,7 @@ useEffect(()=>{
   setuid('');
   setcal([]);
   getTrakee();
-},[isFocused])
+},[])
 async function getTrakee(){
   const data =database().ref('trakees/'+auth().currentUser.uid+'/');
   let arr=[];
@@ -80,16 +80,19 @@ async function getTrakee(){
     // console.log('data====>',new Date( arr[0].lastDate).toDateString());
     let markedDay = {};
     if(arr.length>0){
-      setuid(arr[0]?.uid);
-      selectDayes(arr[0]?.uid);
-      setcycle(arr[0].cycle);
       const sd=(moment(arr[0].lastDate).add(7,'day'));
       const ft=(moment(arr[0].lastDate).add(13,'day'));
       // 2022-01-01
-      setstartday(moment(arr[0].lastDate).format('yyy-MM-DD'));
-      setlastday(moment(sd).format('yyy-MM-DD'));
-      setfert(moment(ft).format('yyy-MM-DD'))
-      console.log(typeof arr[0].cycle);
+      setTimeout(() => {
+        setstartday(moment(arr[0].lastDate).format('yyy-MM-DD'));
+        setlastday(moment(sd).format('yyy-MM-DD'));
+        setfert(moment(ft).format('yyy-MM-DD'));
+        setuid(arr[0]?.uid);
+        selectDayes(arr[0]?.uid);
+        setcycle(arr[0].cycle);
+      }, 300);
+     
+      console.log('last day==>',moment(sd).format('yyy-MM-DD'));
       
       for(let i=1;i<8;i++) {
       
@@ -98,7 +101,6 @@ async function getTrakee(){
         
     }
     }
-   console.log('markedDay',markedDay);
    setmarkedDays(markedDay);
   });
 }
@@ -134,16 +136,16 @@ function seletedval(value){
       setuid(items?.uid);
       selectDayes(items?.uid);
       setitems_count(items.id);
+      const sd=(moment(items?.lastDate).add(7,'day'));
       for(let i=1;i<8;i++) {
         
         let pDate= moment(items.lastDate).add(i,'day');
         let chk= new Date().getMonth();
         let phk= new Date().getFullYear();
         markedDay[moment(pDate).format('YYYY-MM-DD')] = {selected: true, selectedColor: 'blue',}
-        // console.group('new',chk,phk);
     }
-    console.log('markedDay',markedDay);
     setmarkedDays(markedDay);
+    setlastday(moment(sd).format('yyy-MM-DD'));
     }
   })
 }
@@ -177,7 +179,11 @@ const trakeelist=(({item, index})=>(
    </View>
   </TouchableOpacity>
     ));
+    const p=Object.keys(markedDays)
+    const nt=p[p.length-1];
+    console.group('new',p[p.length-1]);
   return (
+
   <View style={{flex: 1, backgroundColor: 'white'}}>
     <Header
         backgroundColor={theme.colors.p1}
@@ -281,6 +287,17 @@ const trakeelist=(({item, index})=>(
             dayComponent={({date, state,marking }) => {
               return (
               <View style={{flexDirection:'row',alignItems:'center'}}>
+                 {Number (cycle)=== date?.day?
+                   <Image source={play} resizeMode='contain' style={{height:10.37,width:10.91,
+                   tintColor:  state === 'disabled' ? 'transparent':theme.colors.primary}} />:null}
+                   {date.dateString===nt?
+                 <View style={{flexDirection:'row',alignItems:'center'}}>
+                   <Image source={ellipse} resizeMode='contain' style={{height:10.37,width:10.91}} />
+                   </View>:null}
+                   {date.dateString===fert?
+                 <View style={{flexDirection:'row',alignItems:'center'}}>
+                   <Image source={triangle} resizeMode='contain' style={{height:10.37,width:10.91}} />
+                   </View>:null}
                 {cal?.map( item=>
                (date.dateString===item.id? 
                    <View style={{flexDirection:'row',alignItems:'center'}}>
@@ -289,17 +306,6 @@ const trakeelist=(({item, index})=>(
                    
                   ))
                   }
-                 {date.dateString===lastday?
-                 <View style={{flexDirection:'row',alignItems:'center'}}>
-                   <Image source={ellipse} resizeMode='contain' style={{height:10.37,width:10.91}} />
-                   </View>:null}
-                   {date.dateString===fert?
-                 <View style={{flexDirection:'row',alignItems:'center'}}>
-                   <Image source={triangle} resizeMode='contain' style={{height:10.37,width:10.91}} />
-                   </View>:null}
-                   {Number (cycle)=== date?.day&&
-                   <Image source={play} resizeMode='contain' style={{height:10.37,width:10.91,
-                   tintColor:  state === 'disabled' ? 'transparent':theme.colors.primary}} />}
                    <TouchableOpacity
                    disabled={Relationship?.length>0?false:true}
                   onPress={()=>navis(uid,date.dateString)}
@@ -311,6 +317,7 @@ const trakeelist=(({item, index})=>(
                     {date.day}
                   </Text>
                   </TouchableOpacity>
+                  
                 </View>
     );
 }}
