@@ -40,7 +40,8 @@ console.log('post key===\n', newPostKey);
     props.navigation.navigate('TrakeePic',{key:newPostKey});
     Snackbar.show({
        text: 'Trakee Name Added',
-       backgroundColor: 'black',
+       backgroundColor: theme.colors.primary,
+       duration: Snackbar.LENGTH_LONG,
      });
   },1000)}else {
     setTimeout(() => {

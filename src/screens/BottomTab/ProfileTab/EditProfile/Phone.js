@@ -51,7 +51,8 @@ const Phone = props => {
       setloading(false);
       Snackbar.show({
          text: 'Phone Number Updated',
-         backgroundColor: 'black',
+         backgroundColor: theme.colors.primary,
+         duration: Snackbar.LENGTH_LONG,
        });
     },1000)
 

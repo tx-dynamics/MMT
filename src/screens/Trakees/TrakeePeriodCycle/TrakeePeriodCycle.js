@@ -34,7 +34,8 @@ async function oncycle(){
     props.navigation.push('Root',{screen:'Home'});
     Snackbar.show({
        text: 'Trakee Period Cycle Added',
-       backgroundColor: 'black',
+       backgroundColor: theme.colors.primary,
+      duration: Snackbar.LENGTH_LONG,
      });
   },1000)
 } else{

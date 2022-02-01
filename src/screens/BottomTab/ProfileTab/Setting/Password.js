@@ -44,7 +44,8 @@ const Password = props => {
                 setLoading(false);
                 Snackbar.show({
                    text: 'Password updated',
-                   backgroundColor: 'black',
+                   backgroundColor: theme.colors.primary,
+                   duration: Snackbar.LENGTH_LONG,
                  });
               },500)
             })

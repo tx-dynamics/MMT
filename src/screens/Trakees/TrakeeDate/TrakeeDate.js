@@ -32,7 +32,8 @@ async function startDate(){
   props.navigation.navigate('TrakeeCycle',{key:id});
     Snackbar.show({
        text: 'Trakee Date Added',
-       backgroundColor: 'black',
+       backgroundColor: theme.colors.primary,
+       duration: Snackbar.LENGTH_LONG,
      });
   },1000)
 }

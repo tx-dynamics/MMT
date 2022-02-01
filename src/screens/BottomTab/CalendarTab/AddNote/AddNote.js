@@ -32,7 +32,8 @@ async function sendNote(){
       props.navigation.push('Calendar');
       Snackbar.show({
          text: `Notes Added on Date ${day}`,
-         backgroundColor: 'black',
+         backgroundColor: theme.colors.primary,
+         duration: Snackbar.LENGTH_LONG,
        });
     },1500)
     }

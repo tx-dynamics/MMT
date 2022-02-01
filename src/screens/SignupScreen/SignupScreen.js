@@ -59,8 +59,8 @@ const SignupScreen = props => {
                         props.navigation.navigate('Trakee',{screen:'Phone'});
                         Snackbar.show({
                           text: `SignUp Succesfully`,
-                          backgroundColor:'black',
-                          duration: Snackbar.LENGTH_LONG,
+                          backgroundColor: theme.colors.primary,
+      duration: Snackbar.LENGTH_LONG,
                         });
                       })
                       .catch(res => {

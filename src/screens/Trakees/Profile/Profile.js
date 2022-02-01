@@ -112,15 +112,17 @@ async function startDate(){
   data.update({
     lastDate:date.toJSON()
   });
+  console.log(date);
   setTimeout(()=>{
     setloading(false);
-    setmodalVisible(false)
-  props.navigation.goBack();
+    setmodalVisible(false);
     Snackbar.show({
        text: 'Trakee Date Updated',
-       backgroundColor: 'black',
+       backgroundColor: theme.colors.primary,
+      duration: Snackbar.LENGTH_LONG,
      });
-  },1000)
+     props.navigation.goBack();
+  },300)
 }
 
   return (

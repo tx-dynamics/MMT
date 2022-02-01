@@ -40,7 +40,8 @@ setTimeout(()=>{
   props.navigation.navigate('Root',{screen:'Home'});
   Snackbar.show({
      text: 'Trakee Relation Updated',
-     backgroundColor: 'black',
+     backgroundColor: theme.colors.primary,
+    duration: Snackbar.LENGTH_LONG,
    });
 },400)
 }

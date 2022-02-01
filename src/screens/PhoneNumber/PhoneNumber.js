@@ -37,7 +37,8 @@ async function onphone(){
     props.navigation.navigate('DOB');
     Snackbar.show({
     text: 'Phone Number Added',
-    backgroundColor: 'black',
+    backgroundColor: theme.colors.primary,
+    duration: Snackbar.LENGTH_LONG,
   });
 }
   )

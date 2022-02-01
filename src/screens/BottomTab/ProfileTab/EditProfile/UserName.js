@@ -54,7 +54,8 @@ const UserName = props => {
       setLoading(false);
       Snackbar.show({
          text: 'Data Updated',
-         backgroundColor: 'black',
+         backgroundColor: theme.colors.primary,
+      duration: Snackbar.LENGTH_LONG,
        });
     },1000)}
     else {

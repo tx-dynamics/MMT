@@ -27,8 +27,8 @@ const login =async () => {
             props.navigation.navigate('Signin');
           Snackbar.show({
             text: 'Password Reset link is sent on your email',
-            backgroundColor: 'black',
-            duration: Snackbar.LENGTH_LONG,
+            backgroundColor: theme.colors.primary,
+      duration: Snackbar.LENGTH_LONG,
           });
     } else {
         setloading(false)

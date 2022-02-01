@@ -35,7 +35,8 @@ setTimeout(()=>{
   props.navigation.navigate('TrakeeDate',{key:id});
   Snackbar.show({
      text: 'Trakee Relation Added',
-     backgroundColor: 'black',
+     backgroundColor: theme.colors.primary,
+     duration: Snackbar.LENGTH_LONG,
    });
 },1000)
 }

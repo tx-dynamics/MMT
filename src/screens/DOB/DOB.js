@@ -32,7 +32,8 @@ await up.update(data).then
     props.navigation.navigate('Setup');
     Snackbar.show({
     text: 'Date of Birth Added',
-    backgroundColor: 'black',
+    backgroundColor: theme.colors.primary,
+    duration: Snackbar.LENGTH_LONG,
   });
 }
   ).catch(err =>{

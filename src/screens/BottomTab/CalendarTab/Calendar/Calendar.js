@@ -31,6 +31,7 @@ const[lastday,setlastday]=useState();
 const[startday,setstartday]=useState();
 const[fert,setfert]=useState();
 const [markedDays, setmarkedDays] = useState([]);
+const[name,setname]=useState('');
 useEffect(()=>{
   setRelationship([]);
   setuid('');
@@ -84,6 +85,7 @@ async function getTrakee(){
       const ft=(moment(arr[0].lastDate).add(13,'day'));
       // 2022-01-01
       setTimeout(() => {
+        setname(arr[0].name);
         setstartday(moment(arr[0].lastDate).format('yyy-MM-DD'));
         setlastday(moment(sd).format('yyy-MM-DD'));
         setfert(moment(ft).format('yyy-MM-DD'));
@@ -136,6 +138,7 @@ function seletedval(value){
       setuid(items?.uid);
       selectDayes(items?.uid);
       setitems_count(items.id);
+      setname(items.name);
       const sd=(moment(items?.lastDate).add(7,'day'));
       for(let i=1;i<8;i++) {
         
@@ -327,7 +330,7 @@ const trakeelist=(({item, index})=>(
     <View style={{flexDirection:'row',width:'90%',alignSelf:'center',justifyContent:"space-between",}}>
       <View style={{flexDirection:'row',alignItems:'center'}}>
       <Image source={circle} resizeMode='contain' style={{height:12,width:12}} />
-      <Text style={{fontWeight:'400',fontSize:10,fontFamily:Fonts.Poppins,color:'black',marginLeft:5}}>Trackee 1</Text>
+      <Text style={{fontWeight:'400',fontSize:10,fontFamily:Fonts.Poppins,color:'black',marginLeft:5}}>{name}</Text>
       </View>
       <View style={{flexDirection:'row',alignItems:'center'}}>
       <Image source={play} resizeMode='contain' style={{height:12,width:12}} />

@@ -26,7 +26,8 @@ const ShowNotes = props => {
       props.navigation.goBack();
       Snackbar.show({
          text: 'Notes Deleted Successfully',
-         backgroundColor: 'black',
+         backgroundColor: theme.colors.primary,
+      duration: Snackbar.LENGTH_LONG,
        });
     })
     .catch(err=>{console.log(err)})

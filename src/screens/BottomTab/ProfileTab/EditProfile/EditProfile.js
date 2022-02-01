@@ -112,7 +112,8 @@ async function onupdate(){
     setloading(false);
     Snackbar.show({
        text: 'Date of Birth Updated',
-       backgroundColor: 'black',
+       backgroundColor: theme.colors.primary,
+      duration: Snackbar.LENGTH_LONG,
      });
      setmodalVisible(false)
   },1000)

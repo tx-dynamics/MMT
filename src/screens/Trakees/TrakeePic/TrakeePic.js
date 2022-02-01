@@ -89,7 +89,8 @@ async function onload(){
   props.navigation.navigate('TrakeeRelationship',{key:id});
     Snackbar.show({
        text: 'Trakee Image Added',
-       backgroundColor: 'black',
+       backgroundColor: theme.colors.primary,
+      duration: Snackbar.LENGTH_LONG,
      });
   },1000)
 }

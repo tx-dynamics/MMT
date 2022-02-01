@@ -46,6 +46,7 @@ const Profile = props => {
           Snackbar.show({
             text: 'Logout Succesfully',
             backgroundColor: theme.colors.primary,
+      duration: Snackbar.LENGTH_LONG,
           });
         }, 300);
       });
