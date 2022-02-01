@@ -22,22 +22,23 @@ import storage from '@react-native-firebase/storage';
 import moment from 'moment';
 const Profile = (props) => {
   const [modalVisible, setmodalVisible] = useState(false);
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState();
   const[uri,seturi]=useState();
   const[namee,setname]=useState();
   const isFocused = useIsFocused();
   const[uid,setuid]=useState();
   const[loading,setloading]=useState(false);
+  const[show,setshow]=useState(false);
   const [pdate, setpDate] = useState(new Date());
   useEffect(()=>{
-    const {cycle,dp,id,item_count,lastDate,name}= props?.route?.params?.data;
-    console.log(item_count);
+    const {cycle,dp,id,item_count,lastDate,name,date}= props?.route?.params?.data;
+    console.log('here',date);
     if(props?.route?.params?.data)
     {
       seturi(dp);
       setname(name);
       setuid(id);
-      setDate(lastDate);
+      setDate(date);
     }
   },[]);
   async function pickImage(){
@@ -110,9 +111,8 @@ const {cycle,dp,id,item_count,lastDate,name}= props?.route?.params?.data;
 async function startDate(){
   const data= database().ref('trakees/'+auth().currentUser?.uid+'/'+id+'/');
   data.update({
-    lastDate:date.toJSON()
+    lastDate:new Date(date).toISOString()
   });
-  console.log(date);
   setTimeout(()=>{
     setloading(false);
     setmodalVisible(false);
@@ -209,8 +209,10 @@ style={{borderBottomWidth:1,borderColor:'white',paddingVertical:10,width:'85%',a
         date={pdate}
         maximumDate={moment().subtract(10, "day").toDate()}
         style={{alignSelf:'center',marginTop:10}}
-        onDateChange={txt=>{setDate(txt),setpDate(txt)}} />
-<TouchableOpacity onPress={()=>{startDate(),setloading(true)}}
+        onDateChange={txt=>{setDate(txt),setpDate(txt),console.log(txt),setshow(true)}} />
+<TouchableOpacity 
+disabled={show?false:true}
+onPress={()=>{startDate(),setloading(true)}}
         style={{borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
         width:'30%',alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,marginTop:20}}>
            {loading ? 

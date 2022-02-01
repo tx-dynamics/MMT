@@ -37,12 +37,13 @@ useEffect(()=>{
   setuid('');
   setcal([]);
   getTrakee();
-},[])
+},[isFocused])
 async function getTrakee(){
+  setRelationship([]);
   const data =database().ref('trakees/'+auth().currentUser.uid+'/');
   let arr=[];
   data.on('value',childern=>{
-    childern.forEach((item)=>{
+  childern.forEach((item)=>{
       const dat=item?.val();
       arr.push({
         id:item.key,
@@ -76,9 +77,9 @@ async function getTrakee(){
         new Date(dat?.lastDate).getFullYear()-new Date().getFullYear():0,'year'):
         dat?.lastDate,
       })
-    })
+    });
     setRelationship(arr);
-    // console.log('data====>',new Date( arr[0].lastDate).toDateString());
+    console.log('here',arr.length);
     let markedDay = {};
     if(arr.length>0){
       const sd=(moment(arr[0].lastDate).add(7,'day'));
@@ -105,6 +106,11 @@ async function getTrakee(){
     }
    setmarkedDays(markedDay);
   });
+  // setTimeout(() => {
+  
+    // }, 400);
+    // console.log('data====>',new Date( arr[0].lastDate).toDateString());
+  
 }
 async function selectDayes(id){
 const dta= database().ref('Calendar/'+id+'/');
@@ -184,7 +190,6 @@ const trakeelist=(({item, index})=>(
     ));
     const p=Object.keys(markedDays)
     const nt=p[p.length-1];
-    console.group('new',p[p.length-1]);
   return (
 
   <View style={{flex: 1, backgroundColor: 'white'}}>

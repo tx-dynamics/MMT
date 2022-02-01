@@ -99,15 +99,14 @@ const Home = props => {
           lastDate: new Date(dat?.lastDate).getMonth()<new Date().getMonth()? moment(dat?.lastDate).add(30,'days'):dat?.lastDate,
           endDate:new Date(dat?.lastDate).getMonth()<new Date().getMonth()?moment( moment(dat?.lastDate).add(30,'days')).add(7,'days'):
           moment (dat?.lastDate).add(7,'days'),
-          ismute:dat?.ismute?true: false
+          ismute:dat?.ismute?true: false,
+          date:dat?.lastDate
         })
-      })
-      console.log('data length===>',arr.length);
+      });
       settrakeeList(arr);
       setlength(arr?.length);
     });
     setTimeout(() => {
-     
       settrakeeloader(false);
     }, 1000);
    
