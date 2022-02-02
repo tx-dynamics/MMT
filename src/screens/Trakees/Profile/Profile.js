@@ -103,7 +103,8 @@ async function onload(uri){
     setloading(false);
     Snackbar.show({
        text: 'Trakee Image Added',
-       backgroundColor: 'black',
+       backgroundColor: theme.colors.primary,
+       duration: Snackbar.LENGTH_LONG,
      });
   },1000)
 }
@@ -121,7 +122,7 @@ async function startDate(){
        backgroundColor: theme.colors.primary,
       duration: Snackbar.LENGTH_LONG,
      });
-     props.navigation.goBack();
+     props.navigation.push('Root');
   },300)
 }
 

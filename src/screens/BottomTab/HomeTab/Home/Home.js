@@ -103,12 +103,12 @@ const Home = props => {
           date:dat?.lastDate
         })
       });
-      settrakeeList(arr);
-      setlength(arr?.length);
     });
     setTimeout(() => {
       settrakeeloader(false);
-    }, 1000);
+      settrakeeList(arr);
+      setlength(arr?.length);
+    }, 500);
    
     // handleNotification();
   }
