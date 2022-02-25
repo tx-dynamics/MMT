@@ -40,8 +40,10 @@ await up.update(data).then
     setloading(false);
     Snackbar.show({
       text: err.message,
-      backgroundColor: theme.colors.s2,
+      backgroundColor: theme.colors.primary,
+      duration: Snackbar.LENGTH_LONG,
     });
+   
   });
 
   

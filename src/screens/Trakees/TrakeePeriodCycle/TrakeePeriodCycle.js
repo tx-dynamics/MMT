@@ -43,7 +43,8 @@ async function oncycle(){
     setloading(false);
     Snackbar.show({
       text: 'Kindly Enter Trakee Period Cycle',
-      backgroundColor: 'black',
+      backgroundColor: theme.colors.primary,
+      duration: Snackbar.LENGTH_LONG,
     });
   },300)
    

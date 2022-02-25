@@ -24,6 +24,7 @@ const [pdate, setpDate] = useState(new Date());
 async function startDate(){
   const id= props.route.params.key;
   const data= database().ref('trakees/'+auth().currentUser?.uid+'/'+id+'/');
+  // console.log(date.toJSON())
   data.update({
     lastDate:date.toJSON()
   });

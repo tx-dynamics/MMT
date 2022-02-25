@@ -28,14 +28,19 @@ const login =async () => {
           Snackbar.show({
             text: 'Password Reset link is sent on your email',
             backgroundColor: theme.colors.primary,
-      duration: Snackbar.LENGTH_LONG,
+            duration: Snackbar.LENGTH_LONG,
           });
     } else {
         setloading(false)
-      Snackbar.show({
-        text: 'Kindly Fill all the fields',
-        backgroundColor: 'black',
-      });
+        Snackbar.show({
+          text: 'Kindly Fill all the fields',
+          backgroundColor: theme.colors.primary,
+          duration: Snackbar.LENGTH_LONG,
+        });
+      // Snackbar.show({
+      //   text: 'Kindly Fill all the fields',
+      //   backgroundColor: 'black',
+      // });
     }
   };
   return (
@@ -73,7 +78,8 @@ const login =async () => {
         disabled={email===''?true:false}
         onPress={()=>{login(),setloading(true)}}
         style={{marginTop:25,borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
-        width:'30%',alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,}}>
+        // width:'50%',
+        alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,}}>
            {loading ? (
                 <ActivityIndicator
                   animating

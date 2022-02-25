@@ -24,6 +24,7 @@ async function sendNote(){
   const day=props.route?.params?.day;
   console.log(id,'\n',day);
   const data =database().ref('Calendar/'+id+'/'+day+'/');
+    console.log("note", data)
      data.set({
        note
      })

@@ -30,14 +30,7 @@ const EditProfile = props => {
   useEffect(()=>{
     loadData();
   },[isFocused])
-  function loadData(){
-    const data=database().ref('users/'+auth().currentUser?.uid+'/');
-    data.on('value',child=>{
-      console.log(new Date());
-      seturi(child?.val()?.dp);
-      setDate(child?.val()?.dob? child?.val()?.dob:new Date());
-    })
-  }
+  
   async function pickImage(){
     try {
         const res = await DocumentPicker.pick({
@@ -98,25 +91,50 @@ async function onload(uri){
   setTimeout(()=>{
     setloading(false);
     Snackbar.show({
-       text: 'Image Updated',
-       backgroundColor: 'black',
-     });
+      text: `Image Updated`,
+      backgroundColor: theme.colors.primary,
+      duration: Snackbar.LENGTH_LONG,
+    });
   },1000)
 }
+
+function loadData(){
+  const data=database().ref('users/'+auth().currentUser?.uid+'/');
+  data.on('value',child=>{
+    console.log(new Date());
+    seturi(child?.val()?.dp);
+    setDate(child?.val()?.dob? child?.val()?.dob:new Date());
+    setpDate(child?.val()?.dob? child?.val()?.dob:new Date())
+
+    // console.log("Date",new Date())
+    let pickDate = child?.val()?.dob
+    console.log(JSON.stringify(pickDate))
+    // setpDate(JSON.stringify(pickDate));
+
+  })
+}
 async function onupdate(){
+  console.log("IN")
+  setloading(true)
   const data=database().ref('users/'+auth().currentUser.uid+'/');
-  const dat={dob:date.toJSON()};
-  console.log(dat);
+  // console.log("data => ", data,)
+  // console.log("datssss", date) ;
+
+  // const dat={dob:date.toJSON()};
+  const dat={dob:date.toString()};
+  console.log(auth().currentUser.uid)
   data.update(dat);
   setTimeout(()=>{
-    setloading(false);
+
     Snackbar.show({
        text: 'Date of Birth Updated',
        backgroundColor: theme.colors.primary,
       duration: Snackbar.LENGTH_LONG,
      });
-     setmodalVisible(false)
+     setloading(false);
+
   },1000)
+  setmodalVisible(false)
 
 }
   return (
@@ -197,12 +215,18 @@ async function onupdate(){
         textColor='white'
         fadeToColor='white'
         androidVariant='nativeAndroid'
-        date={pdate} 
+        date={new Date(pdate)} 
         style={{alignSelf:'center',}}
         maximumDate={moment().subtract(10, "years").toDate()}
-        onDateChange={txt=>{setDate(txt),setpDate(txt)}} />
-<TouchableOpacity 
-onPress={()=>{onupdate(),setloading(true)}}
+        onDateChange={
+          txt=>{
+          setDate(txt),
+          setpDate(txt)
+          console.log("PickerDate", pdate)
+          }} />
+
+        <TouchableOpacity 
+        onPress={()=>{onupdate()}}
         style={{borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
         width:'30%',alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,marginTop:20}}>
            {loading?

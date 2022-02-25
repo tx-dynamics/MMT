@@ -261,9 +261,16 @@ const trakeelist=(({item, index})=>(
         }}>
        
           <TouchableOpacity activeOpacity={0.8}  onPress={() => setmodalVisible(!modalVisible)} 
-          style={{height: '100%',backgroundColor: 'rgba(64, 77, 97, 0.5)',}}>
+          style={{
+          height: '100%',
+          backgroundColor: 'rgba(64, 77, 97, 0.5)',
+          }}>
             <Text   style={{marginTop:20}}></Text>
-          <View style={{flex:0.3,backgroundColor:'white',width:'70%',alignSelf:'center',top:Dimensions.get('window').height/8.8,borderRadius:5,left:20}}>
+          <View style={{
+            // flex:0.3,
+            backgroundColor:'white',
+            width:'70%',alignSelf:'center',
+          top:Dimensions.get('window').height/8.8,borderRadius:5,left:20}}>
           <FlatList
           style={{marginTop:10,width:'90%',alignSelf:'center',}}
           showsVerticalScrollIndicator={false}

@@ -5,7 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  ActivityIndicator,KeyboardAvoidingView,Platform, Dimensions
+  ActivityIndicator,KeyboardAvoidingView,Platform, Dimensions, Alert
 } from 'react-native';
 import {Header} from 'react-native-elements';
 import HeaderCenterComponent from '../../../../components/HeaderCenterComponent';
@@ -42,7 +42,36 @@ const Phone = props => {
       console.log('here==>',dat?.phone)
     })
   }
+
+  function isValid(p) {
+    var phoneRe = /^[2-9]\d{2}[2-9]\d{2}\d{4}$/;
+    var digits = p.replace(/\D/g, "");
+    console.log(phoneRe.test(digits))
+    return phoneRe.test(digits);
+  }
+
   async function onupdate(){
+    // setloading(true)
+  
+    // console.log("IN")
+    // let regPhone = `^((\+92)|(0092))-{0,1}\d{3}-{0,1}\d{7}$|^\d{11}$|^\d{4}-\d{7}$`;
+    // // let regPhone = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+    // // let regPhone = /^[0]?[789]\d{9}$/; only indian number
+    // // let regPhone = ^((\+92)|(0092))-{0,1}\d{3}-{0,1}\d{7}$|^\d{11}$|^\d{4}-\d{7}$;
+    // if(regPhone.test(phone) === false){
+    // console.log("if")
+
+    //   Snackbar.show({
+    //     text: 'Wrong Format',
+    //     backgroundColor: theme.colors.primary,
+    //     duration: Snackbar.LENGTH_LONG,
+    //   });
+    //   console.log("No")
+    //   setloading(false )
+    // }
+    // else{
+    //   console.log("else")
+
     const data=database().ref('users/'+auth().currentUser?.uid);
     data.update({
       phone
@@ -55,9 +84,11 @@ const Phone = props => {
          duration: Snackbar.LENGTH_LONG,
        });
     },1000)
-
+    setloading(false)
   }
- 
+  // }
+
+
   return (
     <View  style={{flex: 1, backgroundColor: theme.colors.p1}}>
     <Header
@@ -92,7 +123,7 @@ const Phone = props => {
     />
     </TouchableOpacity>:
         <PhoneInput
-        containerStyle={
+          containerStyle={
           {marginTop:30,flexDirection:'row',
           alignItems:"center",backgroundColor:theme.colors.p1,
           width:'90%',alignSelf:'center',borderWidth:1.4,borderColor:'#ED6877',borderRadius:10,
@@ -109,16 +140,29 @@ const Phone = props => {
             defaultCode='PK'
             layout='second'
             onChangeText={(text) => {
-              setValue(text),setphone(text)
-            }}
+              let num = text.replace(".", '');
+              if (isNaN(num)) {
+                console.log(num)
+              }
+              else {
+                setValue(text),
+                setphone(text)
+              }
+          }}
+            // onChangeText={(text) => {
+           
+            // }}
             onChangeFormattedText={(text) => {
-              setFormattedValue(text),console.log('txt==>',text),setphone(text)
+              setFormattedValue(text),
+
+              console.log('txt==>',text),setphone(text)
             }}
+            
             autoFocus
           />}
         
         <TouchableOpacity
-         onPress={()=>{onupdate(),setloading(true),setshow(false)}}
+         onPress={()=>{onupdate(),setshow(false)}}
         style={{marginTop:25,borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
         width:'30%',alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,}}>
             {loading?

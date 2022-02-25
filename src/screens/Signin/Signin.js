@@ -47,14 +47,19 @@ async function login() {
         setloading(false);
         Snackbar.show({
           text: err.message.replace('[auth/invalid-email]',''),
-          backgroundColor: theme.colors.s2,
+          backgroundColor: theme.colors.primary,
+          duration: Snackbar.LENGTH_LONG,
         });
+        // Snackbar.show({
+        //   backgroundColor: theme.colors.s2,
+        // });
       });
   } else {
     setloading(false);
     Snackbar.show({
       text: 'Kindly Fill all the fields',
-      backgroundColor: theme.colors.s2,
+      backgroundColor: theme.colors.primary,
+      duration: Snackbar.LENGTH_LONG,
     });
   }
 };

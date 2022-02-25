@@ -1,14 +1,14 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   Image,
-  ActivityIndicator,ScrollView, Dimensions
+  ActivityIndicator, ScrollView, Dimensions
 } from 'react-native';
 import theme from '../../theme';
-import {heart} from '../../assets';
+import { heart } from '../../assets';
 import styles from './styles';
 import { Fonts } from '../../utils/Fonts';
 import Snackbar from 'react-native-snackbar';
@@ -23,200 +23,212 @@ const SignupScreen = props => {
   const [fName, setfName] = useState('');
   const [lName, setlName] = useState('');
   const navigation = props.navigation;
-  
+
   async function clickRegister() {
     var regData = {
-      fName,lName,email,userName,
+      fName, lName, email, userName,
       createdAt: new Date().toISOString(),
     };
     var regex = /^[a-zA-Z ]*$/;
-    const Firstvalid=regex.test(fName);
-    const sndvalid=regex.test(lName);
- if(Firstvalid) {
+    const Firstvalid = regex.test(fName);
+    const sndvalid = regex.test(lName);
+    if (Firstvalid) {
 
- if(sndvalid) {
-    if (fName !==''&& lName!==''&&email!==''&&userName!=='') {
-      console.log('I am here');
-      auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then(newUser => {
-          if (newUser) {
-            auth()
-              .currentUser.updateProfile({
-                displayName: regData.fName + ' ' + regData.lName,
-              })
-              .then(() => {
-                database()
-                  .ref('users/')
-                  .child(auth().currentUser.uid)
-                  .set(regData)
+      if (sndvalid) {
+        if (fName !== '' && lName !== '' && email !== '' && userName !== '') {
+          console.log('I am here');
+          auth()
+            .createUserWithEmailAndPassword(email, password)
+            .then(newUser => {
+              if (newUser) {
+                auth()
+                  .currentUser.updateProfile({
+                    displayName: regData.fName + ' ' + regData.lName,
+                  })
                   .then(() => {
-                    auth()
-                      .signInWithEmailAndPassword(email, password)
-                      .then(res => {
-                        console.log(auth().currentUser);
-                        setLoading(false);
-                        props.navigation.navigate('Trakee',{screen:'Phone'});
-                        Snackbar.show({
-                          text: `SignUp Succesfully`,
-                          backgroundColor: theme.colors.primary,
-      duration: Snackbar.LENGTH_LONG,
-                        });
-                      })
-                      .catch(res => {
-                        setLoading(false);
-                        console.log(res);
-                        Snackbar.show({
-                          text: res.message,
-                          backgroundColor: theme.colors.s2,
-                        });
+                    database()
+                      .ref('users/')
+                      .child(auth().currentUser.uid)
+                      .set(regData)
+                      .then(() => {
+                        auth()
+                          .signInWithEmailAndPassword(email, password)
+                          .then(res => {
+                            console.log(auth().currentUser);
+                            setLoading(false);
+                            props.navigation.navigate('Trakee', { screen: 'Phone' });
+                            Snackbar.show({
+                              text: `SignUp Succesfully`,
+                              backgroundColor: theme.colors.primary,
+                              duration: Snackbar.LENGTH_LONG,
+                            });
+                          })
+                          .catch(res => {
+                            setLoading(false);
+                            console.log(res);
+                            Snackbar.show({
+                              text: res.message,
+                              backgroundColor: theme.colors.primary,
+                              duration: Snackbar.LENGTH_LONG,
+                            });
+                          });
                       });
                   });
+              }
+            })
+            .catch(error => {
+              var errorMessage = error.message;
+              setLoading(false);
+              console.log(errorMessage.replace('[auth/email-already-in-use]', ''));
+              Snackbar.show({
+                text: errorMessage.replace('[auth/email-already-in-use]', ''),
+                backgroundColor: theme.colors.primary,
+                duration: Snackbar.LENGTH_LONG,
               });
-          }
-        })
-        .catch(error => {
-          var errorMessage = error.message;
-         setLoading(false);
-         console.log(errorMessage.replace('[auth/email-already-in-use]',''));
-         Snackbar.show({
-          text: errorMessage.replace('[auth/email-already-in-use]',''),
-          backgroundColor: theme.colors.s2,
-        });
-        });
+            });
+        } else {
+          setTimeout(() => {
+            setLoading(false);
+            Snackbar.show({
+              text: 'Kindly Fill all the fields',
+              backgroundColor: theme.colors.primary,
+              duration: Snackbar.LENGTH_LONG,
+            });
+          
+          }, 300);
+
+        }
+      } else {
+        setTimeout(() => {
+          setLoading(false);
+          Snackbar.show({
+            text: 'Kindly Enter Correct Last Name',
+            backgroundColor: theme.colors.primary,
+            duration: Snackbar.LENGTH_LONG,
+          });
+        }, 300);
+
+      }
+
     } else {
       setTimeout(() => {
         setLoading(false);
         Snackbar.show({
-          text: 'Kindly Fill all the fields',
-          backgroundColor: theme.colors.s2,
+          text: 'Kindly Enter Correct First Name',
+          backgroundColor: theme.colors.primary,
+          duration: Snackbar.LENGTH_LONG,
         });
-      }, 300);
-    
+      }, 300)
+
     }
-  } else {
-    setTimeout(() => {
-      setLoading(false);
-      Snackbar.show({
-        text: 'Kindly Enter Correct Last Name',
-        backgroundColor: theme.colors.s2,
-      });
-    }, 300);
-  
-  }
-  
-  }  else {
-    setTimeout(()=>{
-      setLoading(false);
-    Snackbar.show({
-      text: 'Kindly Enter Correct First Name',
-      backgroundColor: theme.colors.s2,
-    });
-    },300)
-    
-  }
     setLoading(false);
   }
   return (
-  <ScrollView style={{flex: 1, backgroundColor: theme.colors.p1}}>
-     <Image
-          source={heart}
-          style={{
-            height: 240,
-            width: 171,
-            alignSelf: 'center',
-            marginTop: 10,
-          }}/>
-            <Text style={[styles.title]}>Let’s Get Started!</Text>
-            <Text style={[styles.smalltitle]}>Create an account to continue</Text>
-        <View >
-        
-          <View style={{marginTop:30,flexDirection:'row',
-          width:'90%',alignSelf:'center',justifyContent:'space-between'}}>
-            <TextInput
+    <ScrollView style={{ flex: 1, backgroundColor: theme.colors.p1 }}>
+      <Image
+        source={heart}
+        style={{
+          height: 240,
+          width: 171,
+          alignSelf: 'center',
+          marginTop: 10,
+        }} />
+      <Text style={[styles.title]}>Let’s Get Started!</Text>
+      <Text style={[styles.smalltitle]}>Create an account to continue</Text>
+      <View >
+
+        <View style={{
+          marginTop: 30, flexDirection: 'row',
+          width: '90%', alignSelf: 'center', justifyContent: 'space-between'
+        }}>
+          <TextInput
             style={styles.smallInput}
-              placeholder="First Name"
-              onChangeText={text => setfName( text.trim())}
-              value={fName}
-              placeholderTextColor={theme.colors.s2}
-              underlineColorAndroid="transparent"
-              maxLength={10}
-            />
-               <TextInput
+            placeholder="First Name"
+            onChangeText={text => setfName(text.trim())}
+            value={fName}
+            placeholderTextColor={theme.colors.s2}
+            underlineColorAndroid="transparent"
+            maxLength={10}
+          />
+          <TextInput
             style={styles.smallInput}
-              placeholder="Last Name"
-              onChangeText={text => setlName( text)}
-              value={lName}
-              placeholderTextColor={theme.colors.s2}
-              underlineColorAndroid="transparent"
-              maxLength={10}
-            />
-          </View>
-          <View  style={{marginTop:10}}>
-            <TextInput
-              style={styles.InputContainer}
-              placeholder="Username"
-              onChangeText={text => setuserName( text)}
-              value={userName}
-              placeholderTextColor={theme.colors.s2}
-              underlineColorAndroid="transparent"
-              maxLength={20}
-            />
-          </View>
-          <View  style={{marginTop:10}}>
-            <TextInput
-              style={styles.InputContainer}
-              placeholder="Email"
-              onChangeText={text => setemail( text.trim())}
-              value={email}
-              placeholderTextColor={theme.colors.s2}
-              underlineColorAndroid="transparent"
-            />
-          </View>
-          <View  style={{marginTop:10}}>
-            <TextInput
-              style={styles.InputContainer}
-              secureTextEntry={true}
-              placeholder="Password"
-              onChangeText={text => setPassword( text)}
-              value={password}
-              placeholderTextColor={theme.colors.s2}
-              underlineColorAndroid="transparent"
-              maxLength={15}
-            />
-          </View>
-        
+            placeholder="Last Name"
+            onChangeText={text => setlName(text)}
+            value={lName}
+            placeholderTextColor={theme.colors.s2}
+            underlineColorAndroid="transparent"
+            maxLength={10}
+          />
+        </View>
+        <View style={{ marginTop: 10 }}>
+          <TextInput
+            style={styles.InputContainer}
+            placeholder="Username"
+            onChangeText={text => setuserName(text)}
+            value={userName}
+            placeholderTextColor={theme.colors.s2}
+            underlineColorAndroid="transparent"
+            maxLength={20}
+          />
+        </View>
+        <View style={{ marginTop: 10 }}>
+          <TextInput
+            style={styles.InputContainer}
+            placeholder="Email"
+            onChangeText={text => setemail(text.trim())}
+            value={email}
+            placeholderTextColor={theme.colors.s2}
+            underlineColorAndroid="transparent"
+          />
+        </View>
+        <View style={{ marginTop: 10 }}>
+          <TextInput
+            style={styles.InputContainer}
+            secureTextEntry={true}
+            placeholder="Password"
+            onChangeText={text => setPassword(text)}
+            value={password}
+            placeholderTextColor={theme.colors.s2}
+            underlineColorAndroid="transparent"
+            maxLength={15}
+          />
         </View>
 
-        <TouchableOpacity
-        disabled={fName ===''||lName===''||userName===''||email===''||password===''? true:false}
-         onPress={()=>{clickRegister(),setLoading(true)}}
-        style={{marginTop:25,borderColor:'#FFB5CC',borderWidth:1,backgroundColor:theme.colors.primary,
-        width:'30%',alignSelf:'center',alignItems:'center',padding:13,borderRadius:10,}}>
-           {loading ? (
-                <ActivityIndicator
-                  animating
-                  color={'white'}
-                  style={{
-                    color: 'white',
-                    textAlign: 'center',
-                  }}
-                />
-              ) : (
-  <Text style={{color:'white',fontWeight:'500',fontFamily:Fonts.Poppins,fontSize:17}}>Next</Text>)}
-</TouchableOpacity>
+      </View>
+
       <TouchableOpacity
-      onPress={()=>props.navigation.navigate('Signin')}
-      style={{alignSelf:'center',marginTop:Dimensions.get('window').height/6}}>
-      <Text style={{color:'white',fontWeight:'500',
-      fontFamily:Fonts.Poppins,fontSize:15}}>Already have an account?</Text>
-          </TouchableOpacity>
+        disabled={fName === '' || lName === '' || userName === '' || email === '' || password === '' ? true : false}
+        onPress={() => { clickRegister(), setLoading(true) }}
+        style={{
+          marginTop: 25, borderColor: '#FFB5CC', borderWidth: 1, backgroundColor: theme.colors.primary,
+          width: '30%', alignSelf: 'center', alignItems: 'center', padding: 13, borderRadius: 10,
+        }}>
+        {loading ? (
+          <ActivityIndicator
+            animating
+            color={'white'}
+            style={{
+              color: 'white',
+              textAlign: 'center',
+            }}
+          />
+        ) : (
+          <Text style={{ color: 'white', fontWeight: '500', fontFamily: Fonts.Poppins, fontSize: 17 }}>Next</Text>)}
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => props.navigation.navigate('Signin')}
+        style={{ alignSelf: 'center', marginTop: Dimensions.get('window').height / 6 }}>
+        <Text style={{
+          color: 'white', fontWeight: '500',
+          fontFamily: Fonts.Poppins, fontSize: 15
+        }}>Already have an account?</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
 
 export default SignupScreen;
-export function Errors({errors}) {
+export function Errors({ errors }) {
   return (
     <Text
       style={{

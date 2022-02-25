@@ -53,27 +53,32 @@ const Password = props => {
               console.log(error);
                 setLoading(false);
                 Snackbar.show({
-                   text: error.message,
-                   backgroundColor: theme.colors.s2,
-                 });
+                  text: error.message,
+                  backgroundColor: theme.colors.primary,
+                  duration: Snackbar.LENGTH_LONG,
+                });
+              
             });
         })
         .catch(error => {
           console.log(error);
           setLoading(false);
           Snackbar.show({
-             text: error.message.replace('[auth/too-many-requests]',''),
-             backgroundColor: theme.colors.s2,
-           });
+            text: error.message.replace('[auth/too-many-requests]',''),
+            backgroundColor: theme.colors.primary,
+            duration: Snackbar.LENGTH_LONG,
+          });
         });
 
     }else{
       setTimeout(()=>{
         setLoading(false);
         Snackbar.show({
-           text: 'Both passwords must be match',
-           backgroundColor: theme.colors.s2,
-         });
+          text: 'Both passwords must be match',
+          backgroundColor: theme.colors.primary,
+          duration: Snackbar.LENGTH_LONG,
+        });
+        
       },1000)
     }
   }
@@ -81,9 +86,10 @@ const Password = props => {
       setTimeout(()=>{
         setLoading(false);
         Snackbar.show({
-           text: 'Kindly fill all the fields',
-           backgroundColor: theme.colors.s2,
-         });
+          text: 'Kindly fill all the fields',
+          backgroundColor: theme.colors.primary,
+          duration: Snackbar.LENGTH_LONG,
+        });
       },1000)
     }
   }

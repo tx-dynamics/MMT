@@ -216,7 +216,9 @@ style={styles.flatliststyle}>
        
           <TouchableOpacity activeOpacity={0.8}  onPress={() => setmodalVisible(!modalVisible)} style={{height: '100%',backgroundColor: 'rgba(64, 77, 97, 0.5)',}}>
             <Text   style={{marginTop:20}}></Text>
-          <View style={{flex:0.3,backgroundColor:'white',width:'50%',alignSelf:'center',top:20,borderRadius:5}}>
+          <View style={{
+            // flex:0.3,
+            backgroundColor:'white',width:'50%',alignSelf:'center',top:20,borderRadius:5}}>
           <FlatList
           style={{marginTop:10,width:'90%',alignSelf:'center',}}
           showsVerticalScrollIndicator={false}
