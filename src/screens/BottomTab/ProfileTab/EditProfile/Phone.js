@@ -36,6 +36,7 @@ const Phone = props => {
   },[isFocused])
   async function loadData(){
     const data=database().ref('users/'+auth().currentUser?.uid+'/');
+    console.log(auth().currentUser.uid)
     data.on('value',child=>{
       const dat=child?.val();
       setphone(dat?.phone);
@@ -43,35 +44,23 @@ const Phone = props => {
     })
   }
 
-  function isValid(p) {
-    var phoneRe = /^[2-9]\d{2}[2-9]\d{2}\d{4}$/;
-    var digits = p.replace(/\D/g, "");
-    console.log(phoneRe.test(digits))
-    return phoneRe.test(digits);
-  }
+  
 
   async function onupdate(){
-    // setloading(true)
-  
-    // console.log("IN")
-    // let regPhone = `^((\+92)|(0092))-{0,1}\d{3}-{0,1}\d{7}$|^\d{11}$|^\d{4}-\d{7}$`;
-    // // let regPhone = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-    // // let regPhone = /^[0]?[789]\d{9}$/; only indian number
-    // // let regPhone = ^((\+92)|(0092))-{0,1}\d{3}-{0,1}\d{7}$|^\d{11}$|^\d{4}-\d{7}$;
-    // if(regPhone.test(phone) === false){
-    // console.log("if")
 
-    //   Snackbar.show({
-    //     text: 'Wrong Format',
-    //     backgroundColor: theme.colors.primary,
-    //     duration: Snackbar.LENGTH_LONG,
-    //   });
-    //   console.log("No")
-    //   setloading(false )
-    // }
-    // else{
-    //   console.log("else")
-
+    // console.log("phone",value.length)
+    let valls = value.replace(/[^0-9]/g,"").length
+    console.log("valls", valls)
+    if (valls > 15 || valls< 8) {
+      Snackbar.show({
+        text: 'Phone Number Can`t be more than 15 or less than 8 digits ',
+        backgroundColor: theme.colors.primary,
+        duration: Snackbar.LENGTH_LONG,
+      });
+      console.log("Wrong Format")
+    }
+    else{
+     
     const data=database().ref('users/'+auth().currentUser?.uid);
     data.update({
       phone
@@ -84,9 +73,10 @@ const Phone = props => {
          duration: Snackbar.LENGTH_LONG,
        });
     },1000)
+    // console.log("Ok Hai")
+  }
     setloading(false)
   }
-  // }
 
 
   return (
@@ -108,12 +98,15 @@ const Phone = props => {
     { !show?<TouchableOpacity 
     onPress={()=>{setshow(true),setphone('')}}
     style={[styles.InputContainer,{marginTop:30,flexDirection:'row',alignItems:"center"}]}>
-    <Text style={{color:'#FFB5CC',fontWeight:'300',fontSize:15,fontFamily:Fonts.Poppins}}>{phone.slice(0,3)}</Text>
+    <Text style={{color:'#FFB5CC',fontWeight:'300',fontSize:15,fontFamily:Fonts.Poppins}}>
+      {phone.slice(0,3)}
+      </Text>
     <AntDesign name='down' size={9} color={'#FFB5CC'} style={{marginLeft:3}} />
     <Text style={{color:'#FFB5CC',marginLeft:5,bottom:2}}>|</Text>
     <TextInput
     style={{width:'70%',color:'#FFB5CC',fontWeight:'300',fontSize:15,fontFamily:Fonts.Poppins}}
     onChangeText={text => setphone( text.trim())}
+    // value={phone}
     value={phone.slice(3,phone.length)}
     editable={false}
     placeholder='8659273'
@@ -139,19 +132,18 @@ const Phone = props => {
             value={phone}
             defaultCode='PK'
             layout='second'
+          //   onChangeText={(text) => {
+          //     let num = text.replace(".", '');
+          //     if (isNaN(num)) {
+          //       console.log(num)
+          //     }
+          //     else {
+          //     }
+          // }}
             onChangeText={(text) => {
-              let num = text.replace(".", '');
-              if (isNaN(num)) {
-                console.log(num)
-              }
-              else {
-                setValue(text),
-                setphone(text)
-              }
-          }}
-            // onChangeText={(text) => {
-           
-            // }}
+              setValue(text),
+              setphone(text)
+            }}
             onChangeFormattedText={(text) => {
               setFormattedValue(text),
 

@@ -18,6 +18,9 @@ import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import moment from 'moment';
 import { set } from 'react-native-reanimated';
+import Snackbar from 'react-native-snackbar';
+
+
 const Home = props => {
   const[trakeeList,settrakeeList]=useState([]);
   const navigation=props.navigation;
@@ -169,6 +172,7 @@ style={styles.flatliststyle}>
     getTrakee();
   }
  async function upTrakee(){
+    console.log("Yes Un")
     const uid = auth()?.currentUser?.uid;
     console.log( itemes);
     // return
@@ -178,13 +182,25 @@ style={styles.flatliststyle}>
       cycle:itemes?.cycle,
       dp:itemes?.dp,
       item_count: itemes?.items_count,
-      ismute:!itemes?.ismute
+      // ismute:itemes?.ismutec
+      ismute:true
+      
     }
-  data.update(dat);
+  // data.update(dat);
+  data.update(
+    dat
+  );
+  setTimeout(()=>{
+    Snackbar.show({
+       text: 'Tackee Starts, Noted',
+       backgroundColor: theme.colors.primary,
+       duration: Snackbar.LENGTH_LONG,
+     });
+  },1000)
     setonPeriod(!onPeriod);
     settrakeeList([]);
     getTrakee();
-
+  
   }
 
   return (
@@ -220,7 +236,9 @@ style={styles.flatliststyle}>
             // flex:0.3,
             backgroundColor:'white',width:'50%',alignSelf:'center',top:20,borderRadius:5}}>
           <FlatList
-          style={{marginTop:10,width:'90%',alignSelf:'center',}}
+          style={{
+            // marginTop:10,
+            width:'90%',alignSelf:'center',}}
           showsVerticalScrollIndicator={false}
           data={trakeeList}
           renderItem={trakeelist}
