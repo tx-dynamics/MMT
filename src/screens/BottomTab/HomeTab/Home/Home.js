@@ -14,7 +14,7 @@ import {
 import theme from '../../../../theme';
 import {db} from '../../../../assets';
 import {Fonts} from '../../../../utils/Fonts';
-import {Header} from 'react-native-elements';
+import {colors, Header} from 'react-native-elements';
 import styles from './styles';
 import HeaderCenterComponent from '../../../../components/HeaderCenterComponent';
 import {useIsFocused} from '@react-navigation/native';
@@ -24,7 +24,7 @@ import PushNotification from 'react-native-push-notification';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import moment from 'moment';
-import {set} from 'react-native-reanimated';
+import {color, set} from 'react-native-reanimated';
 const Home = props => {
   const [trakeeList, settrakeeList] = useState([]);
   const navigation = props.navigation;
@@ -35,14 +35,32 @@ const Home = props => {
   const [itemes, setitemes] = useState();
   const [Name, setName] = useState();
   const [loading, setloading] = useState(false);
-  const [trakeeloader, settrakeeloader] = useState(false);
+  const [trakeeloader, settrakeeloader] = useState(true);
+  const [currentWeek, setCurrentWeek] = useState([]);
+  const generateCurrentWeek = () => {
+    const currentDate = moment();
+    const weekStart = currentDate.clone().startOf('week');
+    const weekEnd = currentDate.clone().endOf('week');
+
+    const days = [];
+
+    for (let i = 0; i <= 6; i++) {
+      days.push(moment(weekStart).add(i, 'days').format('DD/MM/YYYY'));
+    }
+    // console.log('=>>', days);
+    setCurrentWeek(days);
+  };
   useEffect(() => {
-    settrakeeList([]);
     settrakeeloader(true);
-    getTrakee();
-    settrakeeloader(false);
+    generateCurrentWeek();
+    settrakeeList([]);
+    getTrakee().then(() => {
+      settrakeeloader(false);
+    });
+
     handleNotification();
   }, [isFocused]);
+
   const handleNotification = () => {
     // PushNotification.cancelAllLocalNotifications();
 
@@ -55,13 +73,11 @@ const Home = props => {
     //     id: index
     // });
 
-    settrakeeloader(false);
     const ndate = new Date().toJSON();
     trakeeList.map(items => {
-      console.log(moment(items.lastDate));
-      console.log(new Date(Date.now()));
+      // console.log(moment(items.lastDate));
       if (moment(items.lastDate).format('yy/MM/DD') === new Date(Date.now())) {
-        console.log('hwew', items.lastDate);
+        // console.log('hwew', items.lastDate);
         PushNotification.localNotificationSchedule({
           channelId: 'mmt',
           title: 'Period Notification',
@@ -82,6 +98,7 @@ const Home = props => {
     // });
   };
   async function getTrakee() {
+    console.log('getTrakee', auth().currentUser.uid);
     settrakeeList([]);
     const data = database().ref('trakees/' + auth().currentUser.uid + '/');
     const userdataNAme = database().ref('users/' + auth().currentUser.uid);
@@ -92,7 +109,7 @@ const Home = props => {
     });
     var arr = [];
     data.on('value', childern => {
-      childern.forEach(item => {
+      childern.forEach((item, index) => {
         const dat = item?.val();
         arr.push({
           id: item.key,
@@ -111,13 +128,10 @@ const Home = props => {
           ismute: dat?.ismute ? true : false,
           date: dat?.lastDate,
         });
+        settrakeeList(arr);
+        setlength(arr?.length);
       });
     });
-    setTimeout(() => {
-      settrakeeloader(false);
-      settrakeeList(arr);
-      setlength(arr?.length);
-    }, 500);
 
     // handleNotification();
   }
@@ -203,7 +217,7 @@ const Home = props => {
   function updateTrakee() {
     const uid = auth()?.currentUser?.uid;
     const date = new Date(moment(itemes?.lastDate).add(7, 'days')).toJSON();
-    console.log(itemes);
+    // console.log(itemes);
     // return
     const data = database().ref(
       'trakees/' + auth().currentUser.uid + '/' + itemes?.id + '/',
@@ -218,13 +232,12 @@ const Home = props => {
     data.update(dat);
     setloading(false);
     setonPeriod(!onPeriod);
-
     settrakeeloader(false);
     getTrakee();
   }
   async function upTrakee() {
     const uid = auth()?.currentUser?.uid;
-    console.log(itemes);
+    // console.log(itemes);
     // return
     const data = database().ref(
       'trakees/' + auth().currentUser.uid + '/' + itemes?.id + '/',
@@ -425,6 +438,7 @@ const Home = props => {
           </View>
         </View>
       </Modal>
+
       <View style={{marginTop: 20, width: '90%', alignSelf: 'center'}}>
         <Text
           style={{
@@ -443,6 +457,7 @@ const Home = props => {
           Here is your trackee’s cycle
         </Text>
       </View>
+
       <View style={{flex: 0.9}}>
         {trakeeloader ? (
           <ActivityIndicator
@@ -483,52 +498,116 @@ const Home = props => {
             <Text style={_styles.momentDate}>{`${moment(new Date()).format(
               'DD, MMM YYYY',
             )}`}</Text>
-            {['Mother', 'Daughter', 'D3', 'D4', 'D5', 'D6'].map(
-              (item, index) => (
+            {trakeeList.map((item, index) => {
+              const cDate = moment(item.date).format('DD/MM/YYYY');
+              const Today = moment(new Date()).format('DD/MM/YYYY');
+              const _thisItemDate = currentWeek.indexOf(cDate);
+              // console.log(__Da);
+
+              if (_thisItemDate == -1) return;
+
+              // console.log(item.date);
+              // console.log(
+              //   'trakeeList.map',
+              //   index,
+              //   currentWeek,
+              //   moment(item.date).format('DD/MM/YYYY'),
+              // );
+              return (
                 <View
                   style={{
                     flexDirection: 'row',
                     alignItems: 'center',
                     marginBottom: '5%',
                   }}>
-                  <Text style={_styles.userText}>{item.substring(0, 8)}</Text>
+                  <Text style={_styles.userText}>
+                    {item.name.substring(0, 8)}
+                  </Text>
                   <View style={_styles.line}>
                     <Image
                       source={require('../../../../assets/images/play.png')}
                       resizeMode={'contain'}
                       style={{
-                        width: item === 'Mother' ? 18 : 14,
-                        height: item === 'Mother' ? 18 : 14,
+                        width: 14,
+                        height: 14,
                         position: 'absolute',
                         top: Dimensions.get('window').height * -0.011,
                         left:
-                          Dimensions.get('window').height * 0.018 +
-                          Dimensions.get('window').height * 0.063 * index,
+                          Dimensions.get('window').width * 0.04 +
+                          Dimensions.get('window').width *
+                            0.113 *
+                            _thisItemDate,
                       }}
                     />
                     <View
                       style={{
-                        borderColor: theme.colors.p1,
-                        width: 1,
-                        borderWidth: 1,
-                        height: Dimensions.get('window').height * 0.05,
-                        borderStyle: 'dashed',
-                        marginLeft: Dimensions.get('window').height * 0.03,
-                      }}
-                    />
+                        backgroundColor: theme.colors.primary,
+                        width: Dimensions.get('window').width * 0.111 * 5,
+                        height: 5,
+                        top: Dimensions.get('window').height * -0.004,
+                        left:
+                          Dimensions.get('window').width * 0.08 +
+                          Dimensions.get('window').width *
+                            0.113 *
+                            _thisItemDate,
+
+                        borderRadius: 10,
+                      }}></View>
+
+                    {cDate == Today ? (
+                      <View
+                        style={{
+                          borderColor: theme.colors.p1,
+                          width: 0.1,
+                          borderWidth: 1,
+                          height: Dimensions.get('window').height * 0.05,
+                          borderStyle: 'dashed',
+                          marginLeft:
+                            Dimensions.get('window').width * 0.055 +
+                            Dimensions.get('window').width *
+                              0.113 *
+                              _thisItemDate,
+                        }}
+                      />
+                    ) : null}
                   </View>
                 </View>
-              ),
-            )}
+              );
+            })}
 
             {/* bottomDates */}
-            <View style={_styles.bottomDates}>
-              {[10, 11, 12, 13, 14, 15, 16].map((item, index) => (
-                <View style={_styles.dateCircle}>
-                  <Text style={_styles.dateCircleText}>{item}</Text>
-                </View>
-              ))}
-            </View>
+            {trakeeList.length != 0 ? (
+              <View style={_styles.bottomDates}>
+                {currentWeek.map((item, index) => (
+                  <View
+                    style={[
+                      _styles.dateCircle,
+                      {
+                        backgroundColor:
+                          item == moment(new Date()).format('DD/MM/YYYY')
+                            ? theme.colors.primary
+                            : '#B1B1B1',
+                      },
+                    ]}>
+                    <Text style={_styles.dateCircleText}>
+                      {item.substring(0, 2)}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            ) : null}
+
+            {/* No Trakee Added*/}
+            {trakeeList.length == 0 ? (
+              <Image
+                source={require('../../../../assets/images/AddUser.png')}
+                style={{
+                  width: '100%',
+                  height: Dimensions.get('window').height * 0.35,
+                }}
+                resizeMode={'contain'}
+              />
+            ) : null}
           </View>
         )}
       </View>
@@ -609,7 +688,6 @@ const _styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   dateCircle: {
-    backgroundColor: '#B1B1B1',
     height: 24,
     width: 24,
     alignItems: 'center',

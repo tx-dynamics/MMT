@@ -290,11 +290,73 @@ const Calendars = props => {
                   state === 'today' ? _styles.selectedDay : null,
                   {
                     height: 60,
-                    width: 40,
+                    width: 70,
                     alignItems: 'center',
                     justifyContent: 'center',
                   },
                 ]}>
+                {/* top */}
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: 5,
+                    flexDirection: 'row',
+                  }}>
+                  {['#fcba03', '#0ffc03', '#03e3fc', '#03e3fc'].map(item =>
+                    state === 'today' ? (
+                      <Image
+                        source={require('../../../../assets/images/play.png')}
+                        resizeMode={'contain'}
+                        style={{
+                          width: 10,
+                          height: 10,
+                          marginLeft: 5,
+                          tintColor: state === 'today' ? item : 'none',
+                        }}
+                      />
+                    ) : null,
+                  )}
+                </View>
+                {/* left */}
+                {state === 'today' ? (
+                  <View
+                    style={{
+                      position: 'absolute',
+                      left: 5,
+                      flexDirection: 'row',
+                    }}>
+                    <Image
+                      source={require('../../../../assets/images/play.png')}
+                      resizeMode={'contain'}
+                      style={{
+                        width: 10,
+                        height: 10,
+                        marginLeft: 5,
+                        tintColor: state === 'today' ? '#10394f' : 'none',
+                      }}
+                    />
+                  </View>
+                ) : null}
+                {/* right */}
+                {state === 'today' ? (
+                  <View
+                    style={{
+                      position: 'absolute',
+                      right: 5,
+                      flexDirection: 'row',
+                    }}>
+                    <Image
+                      source={require('../../../../assets/images/play.png')}
+                      resizeMode={'contain'}
+                      style={{
+                        width: 10,
+                        height: 10,
+                        marginLeft: 5,
+                        tintColor: state === 'today' ? '#001eff' : 'none',
+                      }}
+                    />
+                  </View>
+                ) : null}
                 <Text
                   style={[
                     _styles.dateText,
@@ -308,30 +370,20 @@ const Calendars = props => {
                     bottom: 5,
                     flexDirection: 'row',
                   }}>
-                  {date.dateString == '2022-08-24' || state === 'today' ? (
-                    <Image
-                      source={require('../../../../assets/images/ellipse.png')}
-                      resizeMode={'contain'}
-                      style={{
-                        width: 10,
-                        height: 10,
-                        marginLeft: 5,
-                        tintColor: state === 'today' ? 'white' : 'none',
-                      }}
-                    />
-                  ) : null}
-                  {date.dateString == '2022-08-06' || state === 'today' ? (
-                    <Image
-                      source={require('../../../../assets/images/play.png')}
-                      resizeMode={'contain'}
-                      style={{
-                        width: 10,
-                        height: 10,
-                        marginLeft: 5,
-                        tintColor: state === 'today' ? 'white' : 'none',
-                      }}
-                    />
-                  ) : null}
+                  {['#3a003d', '#6b0000', '#ff4d00', '#ddff00'].map(item =>
+                    state === 'today' ? (
+                      <Image
+                        source={require('../../../../assets/images/play.png')}
+                        resizeMode={'contain'}
+                        style={{
+                          width: 10,
+                          height: 10,
+                          marginLeft: 5,
+                          tintColor: state === 'today' ? item : 'none',
+                        }}
+                      />
+                    ) : null,
+                  )}
                 </View>
               </View>
             );
@@ -623,11 +675,10 @@ export default Calendars;
 const _styles = StyleSheet.create({
   selectedDay: {
     borderRadius: 10,
-    backgroundColor: theme.colors.p1,
+    backgroundColor: theme.colors.primary,
   },
   dateText: {
     textAlign: 'center',
-
     fontSize: 18,
     // fontFamily: Fonts.Poppins,
     // color: 'white',
