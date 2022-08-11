@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   TouchableWithoutFeedback,
   StyleSheet,
+  Pressable,
 } from 'react-native';
 import theme from '../../../../theme';
 import {db} from '../../../../assets';
@@ -25,6 +26,8 @@ import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import moment from 'moment';
 import {color, set} from 'react-native-reanimated';
+import Snackbar from 'react-native-snackbar';
+
 const Home = props => {
   const [trakeeList, settrakeeList] = useState([]);
   const navigation = props.navigation;
@@ -37,6 +40,49 @@ const Home = props => {
   const [loading, setloading] = useState(false);
   const [trakeeloader, settrakeeloader] = useState(true);
   const [currentWeek, setCurrentWeek] = useState([]);
+  const [undefinedCount, setundefinedCount] = useState(0);
+  const [confirmationModal, setconfirmationModal] = useState(false);
+  const [selectedTrackee, setselectedTrackee] = useState(null);
+
+  const Today = moment(new Date()).format('DD/MM/YYYY');
+
+  PushNotification.configure({
+    onNotification: function (notification) {
+      setconfirmationModal(true);
+      const {data} = notification;
+      setselectedTrackee(data);
+      console.log('notification', notification);
+    },
+  });
+
+  // Handle Confirmation
+
+  const handleConfirmation = res => {
+    console.log('handleConfirmation', res, selectedTrackee);
+
+    const dataTrakees = database().ref(
+      'trakees/' + auth().currentUser?.uid + '/' + selectedTrackee.id + '/',
+    );
+
+    dataTrakees
+      .update({
+        lastDate: res
+          ? moment(selectedTrackee.lastDate)
+              .add(selectedTrackee.cycle, 'days')
+              .toJSON()
+          : moment(selectedTrackee.lastDate).add(1, 'day').toJSON(),
+      })
+      .then(() => {
+        Snackbar.show({
+          text: `${selectedTrackee.name} data updated!`,
+          backgroundColor: theme.colors.primary,
+          duration: Snackbar.LENGTH_LONG,
+        });
+      });
+
+    setconfirmationModal(false);
+  };
+
   const generateCurrentWeek = () => {
     const currentDate = moment();
     const weekStart = currentDate.clone().startOf('week');
@@ -53,50 +99,34 @@ const Home = props => {
   useEffect(() => {
     settrakeeloader(true);
     generateCurrentWeek();
-    settrakeeList([]);
-    getTrakee().then(() => {
+    getTrakee().then(data => {
       settrakeeloader(false);
     });
-
-    handleNotification();
-  }, [isFocused]);
-
+  }, [isFocused, confirmationModal]);
   const handleNotification = () => {
-    // PushNotification.cancelAllLocalNotifications();
+    console.log('handleNotification');
+    //PushNotification.removeAllDeliveredNotifications();
 
-    // PushNotification.localNotification({
-    //     channelId: "mmt",
-    //     title: "You clicked on " + item,
-    //     message: 'item.city',
-    //     bigText:' item.city' + " is one of the largest and most beatiful cities in " + item,
-    //     color: "red",
-    //     id: index
-    // });
-
-    const ndate = new Date().toJSON();
     trakeeList.map(items => {
-      // console.log(moment(items.lastDate));
-      if (moment(items.lastDate).format('yy/MM/DD') === new Date(Date.now())) {
-        // console.log('hwew', items.lastDate);
-        PushNotification.localNotificationSchedule({
+      if (moment(items.lastDate).format('DD/MM/YYYY') == Today) {
+        console.log('Generating Notification for', items);
+        PushNotification.localNotification({
           channelId: 'mmt',
           title: 'Period Notification',
-          message: 'Your trakee ' + items.name + ' period starts',
-          date: new Date(items.lastDate),
+          message: `Your Trakee ${items.name}'s Period Starts Today`,
           allowWhileIdle: true,
+          userInfo: items,
         });
       } else {
-        console.log('not');
+        console.log(`no Notifications Today for ${items.name}`);
       }
     });
-    // PushNotification.localNotificationSchedule({
-    //     channelId: "mmt",
-    //     title: "Period Notification",
-    //     message: "Your trakee "+item.name+" period starts",
-    //     date: new Date(item.lastDate),
-    //     allowWhileIdle: true,
-    // });
   };
+
+  const filterTrakeeList = arr => {
+    console.log('filterTrakeeList', arr);
+  };
+
   async function getTrakee() {
     console.log('getTrakee', auth().currentUser.uid);
     settrakeeList([]);
@@ -117,21 +147,30 @@ const Home = props => {
           cycle: dat?.cycle,
           dp: dat?.dp,
           item_count: dat?.items_count,
-          lastDate:
-            new Date(dat?.lastDate).getMonth() < new Date().getMonth()
-              ? moment(dat?.lastDate).add(30, 'days')
-              : dat?.lastDate,
-          endDate:
-            new Date(dat?.lastDate).getMonth() < new Date().getMonth()
-              ? moment(moment(dat?.lastDate).add(30, 'days')).add(7, 'days')
-              : moment(dat?.lastDate).add(7, 'days'),
+          lastDate: dat?.lastDate,
+          // endDate: moment(dat?.lastDate).add(7, 'days'),
           ismute: dat?.ismute ? true : false,
           date: dat?.lastDate,
         });
+        // console.log('settrakeeList(arr);', arr);
         settrakeeList(arr);
+
+        // console.log('=>', newArray);
+
         setlength(arr?.length);
       });
     });
+
+    const newArray = arr.filter((item, index) => {
+      const cDate = moment(item.date).format('DD/MM/YYYY');
+      const _thisItemDate = currentWeek.indexOf(cDate);
+
+      if (_thisItemDate != -1) {
+        return true;
+      }
+    });
+
+    newArray.length > 0 && settrakeeList(newArray);
 
     // handleNotification();
   }
@@ -214,11 +253,17 @@ const Home = props => {
       </View>
     </TouchableOpacity>
   );
+
+  useEffect(() => {
+    handleNotification();
+  }, [trakeeList]);
+
   function updateTrakee() {
     const uid = auth()?.currentUser?.uid;
-    const date = new Date(moment(itemes?.lastDate).add(7, 'days')).toJSON();
-    // console.log(itemes);
-    // return
+    const daysToAdd = itemes.cycle + 1;
+    const date = new Date(
+      moment(itemes?.lastDate).add(daysToAdd, 'days'),
+    ).toJSON();
     const data = database().ref(
       'trakees/' + auth().currentUser.uid + '/' + itemes?.id + '/',
     );
@@ -237,8 +282,6 @@ const Home = props => {
   }
   async function upTrakee() {
     const uid = auth()?.currentUser?.uid;
-    // console.log(itemes);
-    // return
     const data = database().ref(
       'trakees/' + auth().currentUser.uid + '/' + itemes?.id + '/',
     );
@@ -269,7 +312,7 @@ const Home = props => {
           <TouchableOpacity
             onPress={() => setmodalVisible(true)}
             style={{flexDirection: 'row', top: 10, alignItems: 'center'}}>
-            {trakeeList.length > 0 ? (
+            {trakeeList?.length > 0 ? (
               <>
                 <Image
                   source={trakeeList[0]?.dp ? {uri: trakeeList[0]?.dp} : db}
@@ -472,19 +515,6 @@ const Home = props => {
             }}
           />
         ) : (
-          // <FlatList
-          //   style={{
-          //     marginTop: 20,
-          //     width: '90%',
-          //     alignSelf: 'center',
-          //     marginBottom: 10,
-          //     flex: 1,
-          //   }}
-          //   showsVerticalScrollIndicator={false}
-          //   data={trakeeList}
-          //   renderItem={ontrakeeShow}
-          // />
-          // calendarIcon
           <View style={_styles.containerMiddle}>
             {/* Date */}
             <View style={_styles.Date}>
@@ -498,21 +528,14 @@ const Home = props => {
             <Text style={_styles.momentDate}>{`${moment(new Date()).format(
               'DD, MMM YYYY',
             )}`}</Text>
+            {/* removing unwanted objects from trakeeList */}
             {trakeeList.map((item, index) => {
               const cDate = moment(item.date).format('DD/MM/YYYY');
-              const Today = moment(new Date()).format('DD/MM/YYYY');
               const _thisItemDate = currentWeek.indexOf(cDate);
-              // console.log(__Da);
 
-              if (_thisItemDate == -1) return;
-
-              // console.log(item.date);
-              // console.log(
-              //   'trakeeList.map',
-              //   index,
-              //   currentWeek,
-              //   moment(item.date).format('DD/MM/YYYY'),
-              // );
+              if (_thisItemDate == -1) {
+                return;
+              }
               return (
                 <View
                   style={{
@@ -521,7 +544,7 @@ const Home = props => {
                     marginBottom: '5%',
                   }}>
                   <Text style={_styles.userText}>
-                    {item.name.substring(0, 8)}
+                    {item?.name?.substring(0, 8)}
                   </Text>
                   <View style={_styles.line}>
                     <Image
@@ -539,31 +562,35 @@ const Home = props => {
                             _thisItemDate,
                       }}
                     />
+                    {/* Period Line */}
                     <View
                       style={{
                         backgroundColor: theme.colors.primary,
                         width: Dimensions.get('window').width * 0.111 * 5,
                         height: 5,
-                        top: Dimensions.get('window').height * -0.004,
+                        top: Dimensions.get('window').height * -0.003,
                         left:
                           Dimensions.get('window').width * 0.08 +
                           Dimensions.get('window').width *
                             0.113 *
                             _thisItemDate,
 
-                        borderRadius: 10,
+                        borderRadius: 15,
                       }}></View>
 
                     {cDate == Today ? (
                       <View
                         style={{
                           borderColor: theme.colors.p1,
-                          width: 0.1,
-                          borderWidth: 1,
-                          height: Dimensions.get('window').height * 0.05,
+                          width: 5,
+                          borderLeftWidth: 1,
+                          height:
+                            Dimensions.get('window').height *
+                            0.05 *
+                            (trakeeList.length - index),
                           borderStyle: 'dashed',
                           marginLeft:
-                            Dimensions.get('window').width * 0.055 +
+                            Dimensions.get('window').width * 0.057 +
                             Dimensions.get('window').width *
                               0.113 *
                               _thisItemDate,
@@ -633,6 +660,58 @@ const Home = props => {
           Add Trackee
         </Text>
       </TouchableOpacity>
+      {/* Confirmation Modal */}
+      <Modal visible={confirmationModal} transparent={true}>
+        <Pressable
+          style={{
+            flex: 1,
+            backgroundColor: 100,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onPress={() => setconfirmationModal(false)}>
+          <View
+            style={{
+              width: '80%',
+              height: '30%',
+              backgroundColor: 'white',
+              borderRadius: 20,
+              padding: '5%',
+              justifyContent: 'space-between',
+            }}>
+            {/* Title */}
+            <Text style={_styles.confirmationModalTitle}>Confirmation</Text>
+            {/* Description */}
+            <Text
+              style={
+                _styles.confirmationModalDescription
+              }>{`Did the trackee ${selectedTrackee?.name} got her period today?`}</Text>
+
+            {/* Buttons */}
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
+              {/* Yes */}
+              <Pressable
+                style={[
+                  _styles.confirmationButton,
+                  {backgroundColor: '#5fff03'},
+                ]}
+                onPress={() => handleConfirmation(true)}>
+                <Text style={_styles.confirmationButtonText}>Yes</Text>
+              </Pressable>
+              {/* No */}
+              <Pressable
+                style={[
+                  _styles.confirmationButton,
+                  {backgroundColor: '#ff1f1f'},
+                ]}
+                onPress={() => handleConfirmation(false)}>
+                <Text style={_styles.confirmationButtonText}>No</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Pressable>
+      </Modal>
     </View>
   );
 };
@@ -699,5 +778,32 @@ const _styles = StyleSheet.create({
     fontFamily: Fonts.Poppins,
     fontWeight: '400',
     color: 'white',
+  },
+  confirmationButton: {
+    width: '40%',
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 20,
+  },
+  confirmationButtonText: {
+    fontSize: 20,
+    fontFamily: Fonts.Poppins,
+    fontWeight: '800',
+    color: 'white',
+  },
+  confirmationModalTitle: {
+    fontSize: 24,
+    fontFamily: Fonts.Poppins,
+    fontWeight: '800',
+    color: theme.colors.primary,
+    alignSelf: 'center',
+  },
+  confirmationModalDescription: {
+    fontSize: 16,
+    fontFamily: Fonts.Poppins,
+    fontWeight: '600',
+    color: 'black',
+    alignSelf: 'center',
   },
 });
