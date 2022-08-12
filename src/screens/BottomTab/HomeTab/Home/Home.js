@@ -51,14 +51,14 @@ const Home = props => {
       setconfirmationModal(true);
       const {data} = notification;
       setselectedTrackee(data);
-      console.log('notification', notification);
+      // console.log('notification', notification);
     },
   });
 
   // Handle Confirmation
 
   const handleConfirmation = res => {
-    console.log('handleConfirmation', res, selectedTrackee);
+    // console.log('handleConfirmation', res, selectedTrackee);
 
     const dataTrakees = database().ref(
       'trakees/' + auth().currentUser?.uid + '/' + selectedTrackee.id + '/',
@@ -103,11 +103,11 @@ const Home = props => {
       settrakeeloader(false);
     });
   }, [isFocused, confirmationModal]);
-  const handleNotification = () => {
-    console.log('handleNotification');
+  const handleNotification = arr => {
+    // console.log('handleNotification', trakeeList);
     //PushNotification.removeAllDeliveredNotifications();
 
-    trakeeList.map(items => {
+    arr.map(items => {
       if (moment(items.lastDate).format('DD/MM/YYYY') == Today) {
         console.log('Generating Notification for', items);
         PushNotification.localNotification({
@@ -117,19 +117,25 @@ const Home = props => {
           allowWhileIdle: true,
           userInfo: items,
         });
-      } else {
+      } else if (moment(items.lastDate).isBefore(moment())) {
+        const dataTrakees = database().ref(
+          'trakees/' + auth().currentUser?.uid + '/' + items.id + '/',
+        );
+        const newDate = moment(items.lastDate);
+        newDate.add(items.cycle, 'days');
+        console.log('=>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', items.name, newDate);
+        dataTrakees.update({
+          lastDate: moment(items.lastDate)
+            .add(parseInt(items.cycle), 'days')
+            .toJSON(),
+        });
         console.log(`no Notifications Today for ${items.name}`);
       }
     });
   };
 
-  const filterTrakeeList = arr => {
-    console.log('filterTrakeeList', arr);
-  };
-
   async function getTrakee() {
     console.log('getTrakee', auth().currentUser.uid);
-    settrakeeList([]);
     const data = database().ref('trakees/' + auth().currentUser.uid + '/');
     const userdataNAme = database().ref('users/' + auth().currentUser.uid);
     userdataNAme.on('value', userdata => {
@@ -138,28 +144,32 @@ const Home = props => {
       }
     });
     var arr = [];
-    data.on('value', childern => {
-      childern.forEach((item, index) => {
-        const dat = item?.val();
-        arr.push({
-          id: item.key,
-          name: dat?.Name,
-          cycle: dat?.cycle,
-          dp: dat?.dp,
-          item_count: dat?.items_count,
-          lastDate: dat?.lastDate,
-          // endDate: moment(dat?.lastDate).add(7, 'days'),
-          ismute: dat?.ismute ? true : false,
-          date: dat?.lastDate,
+    data
+      .once('value', childern => {
+        childern.forEach((item, index) => {
+          const dat = item?.val();
+          arr.push({
+            id: item.key,
+            name: dat?.Name,
+            cycle: dat?.cycle,
+            dp: dat?.dp,
+            item_count: dat?.items_count,
+            lastDate: dat?.lastDate,
+            // endDate: moment(dat?.lastDate).add(7, 'days'),
+            ismute: dat?.ismute ? true : false,
+            date: dat?.lastDate,
+          });
+
+          // console.log('=>', newArray);
+
+          setlength(arr?.length);
         });
-        // console.log('settrakeeList(arr);', arr);
+      })
+      .then(() => {
+        console.log('=>', arr);
         settrakeeList(arr);
-
-        // console.log('=>', newArray);
-
-        setlength(arr?.length);
+        handleNotification(arr);
       });
-    });
 
     const newArray = arr.filter((item, index) => {
       const cDate = moment(item.date).format('DD/MM/YYYY');
@@ -254,9 +264,10 @@ const Home = props => {
     </TouchableOpacity>
   );
 
-  useEffect(() => {
-    handleNotification();
-  }, [trakeeList]);
+  // useEffect(() => {
+  //   console.log('handleNotification');
+  //   handleNotification();
+  // }, [trakeeList]);
 
   function updateTrakee() {
     const uid = auth()?.currentUser?.uid;

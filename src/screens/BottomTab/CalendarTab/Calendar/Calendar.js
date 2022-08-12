@@ -173,9 +173,9 @@ const Calendars = props => {
   }
   const renderArrow = direction => {
     if (direction === 'left') {
-      return <AntDesign name="left" size={18} color={'#C62252'} />;
+      return <AntDesign name="left" size={25} color={'#C62252'} />;
     } else {
-      return <AntDesign name="right" size={18} color={'#C62252'} />;
+      return <AntDesign name="right" size={25} color={'#C62252'} />;
     }
   };
   function seletedval(value) {
@@ -275,14 +275,8 @@ const Calendars = props => {
         showsVerticalScrollIndicator={false}
         style={{marginTop: '5%'}}>
         <Calendar
-          // hideArrows={false}
-          // renderArrow={renderArrow}
-          // customHeader={({date, state}) => (
-          //   <View>
-          //     <Text>{date.day}</Text>
-          //   </View>
-          // )}
-
+          hideArrows={false}
+          renderArrow={renderArrow}
           dayComponent={({date, state}) => {
             return (
               <View
@@ -290,19 +284,19 @@ const Calendars = props => {
                   state === 'today' ? _styles.selectedDay : null,
                   {
                     height: 60,
-                    width: 70,
+                    width: 50,
                     alignItems: 'center',
                     justifyContent: 'center',
                   },
                 ]}>
                 {/* top */}
-                <View
+                {/* <View
                   style={{
                     position: 'absolute',
                     top: 5,
                     flexDirection: 'row',
                   }}>
-                  {['#fcba03', '#0ffc03', '#03e3fc', '#03e3fc'].map(item =>
+                  {['red', '#0ffc03', '#03e3fc', '#03e3fc'].map(item =>
                     state === 'today' ? (
                       <Image
                         source={require('../../../../assets/images/play.png')}
@@ -311,14 +305,14 @@ const Calendars = props => {
                           width: 10,
                           height: 10,
                           marginLeft: 5,
-                          tintColor: state === 'today' ? item : 'none',
+                          tintColor: state === 'today' ? 'white' : 'none',
                         }}
                       />
                     ) : null,
                   )}
-                </View>
+                </View> */}
                 {/* left */}
-                {state === 'today' ? (
+                {/* {state === 'today' ? (
                   <View
                     style={{
                       position: 'absolute',
@@ -336,9 +330,9 @@ const Calendars = props => {
                       }}
                     />
                   </View>
-                ) : null}
+                ) : null} */}
                 {/* right */}
-                {state === 'today' ? (
+                {/* {state === 'today' ? (
                   <View
                     style={{
                       position: 'absolute',
@@ -356,7 +350,7 @@ const Calendars = props => {
                       }}
                     />
                   </View>
-                ) : null}
+                ) : null} */}
                 <Text
                   style={[
                     _styles.dateText,
@@ -364,7 +358,7 @@ const Calendars = props => {
                   ]}>
                   {date.day}
                 </Text>
-                <View
+                {/* <View
                   style={{
                     position: 'absolute',
                     bottom: 5,
@@ -384,7 +378,7 @@ const Calendars = props => {
                       />
                     ) : null,
                   )}
-                </View>
+                </View> */}
               </View>
             );
           }}
