@@ -35,6 +35,7 @@ import {useIsFocused} from '@react-navigation/native';
 import moment from 'moment';
 import {color} from 'react-native-reanimated';
 import CalenderCard from '../../../../components/cards/calenderCard';
+
 const Calendars = props => {
   const [Relationship, setRelationship] = useState([]);
   const isFocused = useIsFocused();
@@ -48,18 +49,21 @@ const Calendars = props => {
   const [fert, setfert] = useState();
   const [markedDays, setmarkedDays] = useState([]);
   const [name, setname] = useState('');
+
   useEffect(() => {
     setRelationship([]);
     setuid('');
     setcal([]);
     getTrakee();
+    console.log('useEffect');
   }, [isFocused]);
+
   async function getTrakee() {
     setRelationship([]);
     const data = database().ref('trakees/' + auth().currentUser.uid + '/');
     let arr = [];
     data.on('value', childern => {
-      childern.forEach(item => {
+      childern.forEach((item, index) => {
         const dat = item?.val();
         arr.push({
           id: item.key,
@@ -79,55 +83,19 @@ const Calendars = props => {
           cycle: dat.cycle,
           name: dat?.Name,
           dp: dat?.dp,
-          lastDate:
-            new Date(dat?.lastDate).getFullYear() < new Date().getFullYear()
-              ? moment(dat?.lastDate).add({
-                  month:
-                    new Date().getMonth() - new Date(dat?.lastDate).getMonth(),
-                  year:
-                    new Date().getFullYear() >
-                    new Date(dat?.lastDate).getFullYear()
-                      ? new Date().getFullYear() -
-                        new Date(dat?.lastDate).getFullYear()
-                      : new Date().getFullYear() <
-                        new Date(dat?.lastDate).getFullYear()
-                      ? new Date(dat?.lastDate).getFullYear() -
-                        new Date().getFullYear()
-                      : 0,
-                })
-              : // .add(
-              //   new Date().getFullYear()>
-              // new Date(dat?.lastDate).getFullYear()?
-              // new Date().getFullYear()-new Date(dat?.lastDate).getFullYear():
-              // new Date().getFullYear()<new Date(dat?.lastDate).getFullYear()?
-              // new Date(dat?.lastDate).getFullYear()-new Date().getFullYear():0
-              // ,'year'):
-              new Date(dat?.lastDate).getFullYear() > new Date().getFullYear()
-              ? moment(dat?.lastDate)
-                  .add(
-                    new Date(dat?.lastDate).getMonth() - new Date().getMonth(),
-                    'month',
-                  )
-                  .add(
-                    new Date().getFullYear() >
-                      new Date(dat?.lastDate).getFullYear()
-                      ? new Date().getFullYear() -
-                          new Date(dat?.lastDate).getFullYear()
-                      : new Date().getFullYear() <
-                        new Date(dat?.lastDate).getFullYear()
-                      ? new Date(dat?.lastDate).getFullYear() -
-                        new Date().getFullYear()
-                      : 0,
-                    'year',
-                  )
-              : dat?.lastDate,
+          lastDate: dat?.lastDate,
+          periodEndDate: moment(dat?.lastDate).add(5, 'days'),
+          ovulation: moment(dat?.lastDate)
+            .add(parseInt(dat.cycle), 'days')
+            .subtract(14, 'days'),
         });
+        console.log(index, arr);
       });
       setRelationship(arr);
-      console.log('here', arr.length);
+      // console.log('here', arr.length);
       let markedDay = {};
       if (arr.length > 0) {
-        const sd = moment(arr[0].lastDate).add(7, 'day');
+        const sd = moment(arr[0].lastDate).add(5, 'day');
         const ft = moment(arr[0].lastDate).add(13, 'day');
         // 2022-01-01
         setTimeout(() => {
@@ -140,7 +108,7 @@ const Calendars = props => {
           setcycle(arr[0].cycle);
         }, 300);
 
-        console.log('last day==>', moment(sd).format('yyy-MM-DD'));
+        // console.log('last day==>', moment(sd).format('yyy-MM-DD'));
 
         for (let i = 1; i < 8; i++) {
           let pDate = moment(arr[0].lastDate).add(i, 'day');
@@ -179,11 +147,11 @@ const Calendars = props => {
     }
   };
   function seletedval(value) {
-    console.log(value);
+    // console.log(value);
     let markedDay = {};
     Relationship.map(items => {
       if (items.uid === value) {
-        console.log('name', items.name);
+        // console.log('name', items.name);
         setuid(items?.uid);
         selectDayes(items?.uid);
         setitems_count(items.id);
@@ -207,9 +175,9 @@ const Calendars = props => {
     let add = true;
     cal.find(item => {
       if (item.id === dates) {
-        console.log('dates', item.note);
+        // console.log('dates', item.note);
         add = false;
-        console.log('dates', add);
+        // console.log('dates', add);
         add = false;
         props.navigation.push('ShowNote', {
           uid: ids,
@@ -219,7 +187,7 @@ const Calendars = props => {
       }
     });
     if (add) {
-      console.log('hi', add);
+      // console.log('hi', add);
       props.navigation.navigate('Note', {uid: ids, day: dates});
     }
   }
@@ -278,6 +246,39 @@ const Calendars = props => {
           hideArrows={false}
           renderArrow={renderArrow}
           dayComponent={({date, state}) => {
+            // console.log(date.dateString, moment().format('YYYY-MM-DD'));
+            // Relationship.find()
+
+            const ind = [];
+            Relationship.findIndex((val, index) => {
+              if (
+                moment(val.lastDate).format('YYYY-MM-DD') == date.dateString
+              ) {
+                ind.push('cycle');
+              } else if (
+                moment(val.ovulation).format('YYYY-MM-DD') == date.dateString
+              ) {
+                ind.push('ovulation');
+              } else if (
+                moment(val.lastDate).format('YYYY-MM-DD') < date.dateString &&
+                moment(val.periodEndDate).format('YYYY-MM-DD') >=
+                  date.dateString
+              ) {
+                ind.push('periodEndDate');
+              } else if (
+                moment(val.ovulation).subtract(1, 'day').format('YYYY-MM-DD') ==
+                  date.dateString ||
+                moment(val.ovulation).subtract(2, 'day').format('YYYY-MM-DD') ==
+                  date.dateString ||
+                moment(val.ovulation).add(1, 'day').format('YYYY-MM-DD') ==
+                  date.dateString ||
+                moment(val.ovulation).add(2, 'day').format('YYYY-MM-DD') ==
+                  date.dateString
+              ) {
+                ind.push('fertility');
+              }
+            });
+
             return (
               <View
                 style={[
@@ -290,33 +291,43 @@ const Calendars = props => {
                   },
                 ]}>
                 {/* top */}
-                {/* <View
+                <View
                   style={{
                     position: 'absolute',
                     top: 5,
                     flexDirection: 'row',
                   }}>
-                  {['red', '#0ffc03', '#03e3fc', '#03e3fc'].map(item =>
-                    state === 'today' ? (
-                      <Image
-                        source={require('../../../../assets/images/play.png')}
-                        resizeMode={'contain'}
-                        style={{
-                          width: 10,
-                          height: 10,
-                          marginLeft: 5,
-                          tintColor: state === 'today' ? 'white' : 'none',
-                        }}
-                      />
-                    ) : null,
-                  )}
-                </View> */}
+                  {ind
+                    .filter((e, i) => i < 3)
+                    .map((item, index) => {
+                      const imageSource =
+                        item === 'cycle'
+                          ? require(`../../../../assets/images/play.png`)
+                          : item === 'ovulation'
+                          ? require(`../../../../assets/images/ellipse.png`)
+                          : item === 'fertility'
+                          ? require(`../../../../assets/images/tri.png`)
+                          : require(`../../../../assets/images/line.png`);
+                      return (
+                        <Image
+                          source={imageSource}
+                          resizeMode={'contain'}
+                          style={{
+                            width: 10,
+                            height: 10,
+                            marginLeft: 5,
+                            tintColor: state === 'today' ? 'white' : 'none',
+                          }}
+                        />
+                      );
+                    })}
+                </View>
                 {/* left */}
-                {/* {state === 'today' ? (
+                {ind[3] ? (
                   <View
                     style={{
                       position: 'absolute',
-                      left: 5,
+                      left: 0,
                       flexDirection: 'row',
                     }}>
                     <Image
@@ -330,9 +341,9 @@ const Calendars = props => {
                       }}
                     />
                   </View>
-                ) : null} */}
+                ) : null}
                 {/* right */}
-                {/* {state === 'today' ? (
+                {ind[4] ? (
                   <View
                     style={{
                       position: 'absolute',
@@ -345,12 +356,12 @@ const Calendars = props => {
                       style={{
                         width: 10,
                         height: 10,
-                        marginLeft: 5,
+                        marginRight: -3,
                         tintColor: state === 'today' ? '#001eff' : 'none',
                       }}
                     />
                   </View>
-                ) : null} */}
+                ) : null}
                 <Text
                   style={[
                     _styles.dateText,
@@ -358,14 +369,15 @@ const Calendars = props => {
                   ]}>
                   {date.day}
                 </Text>
-                {/* <View
+                <View
                   style={{
                     position: 'absolute',
                     bottom: 5,
                     flexDirection: 'row',
                   }}>
-                  {['#3a003d', '#6b0000', '#ff4d00', '#ddff00'].map(item =>
-                    state === 'today' ? (
+                  {ind
+                    .filter((e, i) => i >= 5)
+                    .map(item => (
                       <Image
                         source={require('../../../../assets/images/play.png')}
                         resizeMode={'contain'}
@@ -373,12 +385,11 @@ const Calendars = props => {
                           width: 10,
                           height: 10,
                           marginLeft: 5,
-                          tintColor: state === 'today' ? item : 'none',
+                          tintColor: state === 'today' ? 'white' : 'none',
                         }}
                       />
-                    ) : null,
-                  )}
-                </View> */}
+                    ))}
+                </View>
               </View>
             );
           }}

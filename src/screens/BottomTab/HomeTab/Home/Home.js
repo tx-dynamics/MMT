@@ -109,7 +109,7 @@ const Home = props => {
 
     arr.map(items => {
       if (moment(items.lastDate).format('DD/MM/YYYY') == Today) {
-        console.log('Generating Notification for', items);
+        console.log('Generating Notification ');
         PushNotification.localNotification({
           channelId: 'mmt',
           title: 'Period Notification',
@@ -123,7 +123,7 @@ const Home = props => {
         );
         const newDate = moment(items.lastDate);
         newDate.add(items.cycle, 'days');
-        console.log('=>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', items.name, newDate);
+        console.log('=>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
         dataTrakees.update({
           lastDate: moment(items.lastDate)
             .add(parseInt(items.cycle), 'days')
@@ -166,7 +166,7 @@ const Home = props => {
         });
       })
       .then(() => {
-        console.log('=>', arr);
+        // console.log('=>', arr);
         settrakeeList(arr);
         handleNotification(arr);
       });
